@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController("/collection")
 class CollectionControllerImpl : CollectionController {
     @GetMapping("/{collectionAddress}")
-    override fun getCollectionByAddress(@PathVariable collectionAddress: String) {
+    override suspend fun getCollectionByAddress(@PathVariable collectionAddress: String): Any {
         TODO("Not yet implemented")
     }
 
@@ -19,5 +19,4 @@ class CollectionControllerImpl : CollectionController {
     override fun getAllCollections() {
         TODO("Not yet implemented")
     }
-
 }

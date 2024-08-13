@@ -3,7 +3,7 @@ package backend.graabackend.controller
 import org.springframework.web.bind.annotation.PathVariable
 
 interface CollectionController {
-    fun getCollectionByAddress(@PathVariable collectionAddress: String)
+    suspend fun getCollectionByAddress(@PathVariable collectionAddress: String): Any
     fun sortNftByPrice()
     fun getAllCollections()
 }

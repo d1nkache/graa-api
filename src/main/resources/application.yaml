@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: graa-backen
+
+server:
+  port: 8000
