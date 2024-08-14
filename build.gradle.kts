@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.3.2"
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("plugin.jpa") version "1.9.24"
+	application
 }
 
 group = "backend"
@@ -13,6 +14,22 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+application {
+	mainClass.set("backend.graabackend.GraaBackendApplicationKt")
+}
+
+tasks.jar {
+	manifest {
+		attributes(
+			"Main-Class" to application.mainClass.get()
+		)
+	}
+}
+
+tasks.register("buildDocker", Exec::class) {
+	dependsOn("build")
 }
 
 repositories {
@@ -38,6 +55,10 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	//Логирование
+	implementation("org.slf4j:slf4j-api:2.0.7")  // SLF4J API
+	implementation("ch.qos.logback:logback-classic:1.4.12")  // Logback
 }
 
 kotlin {

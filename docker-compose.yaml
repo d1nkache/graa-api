@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: graa-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs  # Если вам нужно монтировать лог файлы на хост
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge

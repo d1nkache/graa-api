@@ -13,4 +13,7 @@ interface SearchTonApiEndpoints {
 
     @GET("/v2/accounts/{accountId}")
     suspend fun getAccount(@Path("accountId") domain: String): SearchResponse.SearchAccountResponse?
+
+    @GET("/v2/accounts/{accountId}/nfts")
+    suspend fun getUserNft(@Path("accountId") accountId: String): SearchResponse.LocalSearchItemResponse?
 }

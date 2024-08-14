@@ -11,42 +11,38 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/search")
-@Api(value = "Search Controller", description = "REST APIs for search operations")
 class SearchControllerImpl(
     private val searchService: SearchService
 ) : SearchController {
     @GetMapping("/collection/{collectionAddress}")
-    @ApiOperation(value = "Получить пример", notes = "Возвращает пример объекта", response = SearchResponse.MetadataResponse::class)
     override suspend fun globalSearchCollection(@PathVariable collectionAddress: String): SearchResponse = searchControllerHelper(
         firstArg = collectionAddress,
         secondArg = null,
-        errorMessage = "Collection address or Description uncorrected",
-        serviceMethod = searchService::globalSearchCollection
+        errorMessage = "Collection address is uncorrected",
+        serviceMethod1 = searchService::globalSearchCollection
     )
 
     @GetMapping("/nft/{nftAddress}")
-    @ApiOperation(value = "Получить пример", notes = "Возвращает пример объекта", response = SearchResponse.MetadataResponse::class)
     override suspend fun globalSearchNft(@PathVariable nftAddress: String): SearchResponse = searchControllerHelper(
         firstArg = nftAddress,
         secondArg = null,
         errorMessage = "Nft address is Null",
-        serviceMethod = searchService::globalSearchNft
+        serviceMethod1 = searchService::globalSearchNft
     )
 
     @GetMapping("/account/{domain}")
-    @ApiOperation(value = "Получить пример", notes = "Возвращает пример объекта", response = SearchResponse.SearchAccountResponse::class)
     override suspend fun globalSearchAccount(@PathVariable domain: String ): SearchResponse = searchControllerHelper(
         firstArg = domain,
         secondArg = null,
         errorMessage = "Domain name is Null",
-        serviceMethod = searchService::globalSearchAccount
+        serviceMethod1 = searchService::globalSearchAccount
     )
 
-//    @GetMapping("/localSearch/nft")
-//    override fun localSearchNft(@RequestBody request: SearchRequest): Any = searchControllerHelper(
-//        firstArg = request.address,
-//        secondArg =  request.description,
-//        message = "Nft Address or Description are Null",
-//        serviceMethod = searchService::localSearchNft
-//    )
+    @GetMapping("/local-search/nft/{accountId}/{nftAddress}")
+    override suspend fun localSearchNft(@PathVariable accountId: String, @PathVariable nftAddress: String): SearchResponse = searchControllerHelper(
+        firstArg = accountId,
+        secondArg = nftAddress,
+        errorMessage = "Nft Address is uncorrected",
+        serviceMethod2 = searchService::localSearchNft
+    )
 }

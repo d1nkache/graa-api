@@ -6,16 +6,18 @@ import io.github.cdimascio.dotenv.Dotenv
 import org.springframework.context.annotation.Configuration
 import retrofit2.Retrofit
 
+
+// Добавить в докер среду .env - обязательно - пиши нормально !!!
 @Configuration
 class RetrofitConfig {
     fun buildRetrofitObject(): SearchTonApiEndpoints {
-        val baseUrl = Dotenv.load()["TON_API_BASE_URL"]
+//        val baseUrl = Dotenv.load()["TON_API_BASE_URL"]
+        val baseUrl = "https://tonapi.io"
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(SearchTonApiEndpoints::class.java)
-
         return retrofit
     }
 }
