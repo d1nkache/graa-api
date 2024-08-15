@@ -16,12 +16,12 @@ class AuthHeaderFilter : OncePerRequestFilter() {
 
 
     companion object {
-        private val dotenv = dotenv {
-            directory = "/app"
-            filename = ".env"
-        }
+//        private val dotenv = dotenv {
+//            directory = "/graa-backend"
+//            filename = ".env"
+//        }
         private const val AUTH_HEADER = "Authorization"
-        private val API_AUTH_TOKEN = dotenv["API_AUTH_TOKEN"]
+        private val API_AUTH_TOKEN = "KUpuNRJJ4qo?S5IqE/xob9hGt1G8LdM!IazoT/l!vxrvLuFmSJw/bmSUXDosyd2o1Yv/1i12e3xrL7le/Rw233MJWf8InhucuBk1Uyok7aPZsM-UDd6jeF5p-DiVO-6DQZ9Cnzdmq/p DqNuhUCFko/hOXuIUuQz21sixhYh4U=!jc1jl-YFl9VnM4NXhc0YPNCA571daCZnycRvsG9?Cu8F5kCnoMPew6hv5qzxylaTz-iBAwUSgbxYHxj0H3oE?"
     }
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {

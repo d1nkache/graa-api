@@ -1,9 +1,9 @@
 package backend.graabackend.controller
 
+import backend.graabackend.model.response.CollectionResponse
 import org.springframework.web.bind.annotation.PathVariable
 
 interface CollectionController {
-    suspend fun getCollectionByAddress(@PathVariable collectionAddress: String): Any
-    fun sortNftByPrice()
-    fun getAllCollections()
+    suspend fun getCollection(@PathVariable collectionAddress: String): CollectionResponse
+//    suspend fun sortCollectionByPrice(@PathVariable ascending: Boolean): CollectionResponse
 }

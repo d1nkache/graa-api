@@ -6,6 +6,8 @@ import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+
+// тут что-то странное - почему оно раблотает с двумя return
 private val logger: Logger = LoggerFactory.getLogger("backend.graabackend.service.helpers")
 
 suspend fun callSearchMethod(

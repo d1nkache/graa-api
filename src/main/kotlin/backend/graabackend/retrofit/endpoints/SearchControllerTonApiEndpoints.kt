@@ -4,7 +4,7 @@ import backend.graabackend.model.response.SearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface SearchTonApiEndpoints {
+interface SearchControllerTonApiEndpoints {
     @GET("/v2/nfts/collections/{accountId}")
     suspend fun getNftCollection(@Path("accountId") accountId: String): SearchResponse.SearchItemResponse?
 

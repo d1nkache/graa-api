@@ -2,7 +2,7 @@ package backend.graabackend.service.impl
 
 import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.retrofit.RetrofitConfig
-import backend.graabackend.retrofit.endpoints.SearchTonApiEndpoints
+import backend.graabackend.retrofit.endpoints.SearchControllerTonApiEndpoints
 import backend.graabackend.service.SearchService
 import backend.graabackend.service.helpers.callSearchMethod
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service
 class SearchServiceImpl : SearchService {
     @Autowired
     lateinit var retrofitBuilder: RetrofitConfig
-    private val retrofitObject: SearchTonApiEndpoints by lazy {
-        retrofitBuilder.buildRetrofitObject()
+    private val retrofitObject: SearchControllerTonApiEndpoints by lazy {
+        retrofitBuilder.buildSearchRetrofitObject()
     }
 
     override suspend fun globalSearchCollection(collectionAddress: String): SearchResponse = callSearchMethod(

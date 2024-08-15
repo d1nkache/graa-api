@@ -9,5 +9,5 @@ sealed class SearchResponse() {
     class SearchAccountResponse(val name: String, val icon: String): SearchResponse()
     class NftItemResponse(val address: String, val metadata: MetadataResponse): SearchResponse()
     class LocalSearchItemResponse(val nft_items: List<NftItemResponse>): SearchResponse()
-    class AbstractSearchErrorMessage(val message: String, val status: HttpStatus = HttpStatus.BAD_REQUEST ): SearchResponse()
+    class AbstractSearchErrorMessage(val message: String, val status: HttpStatus = HttpStatus.BAD_REQUEST): SearchResponse()
 }

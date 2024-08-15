@@ -25,7 +25,7 @@ class SearchControllerImpl(
     override suspend fun globalSearchNft(@PathVariable nftAddress: String): SearchResponse = searchControllerHelper(
         firstArg = nftAddress,
         secondArg = null,
-        errorMessage = "Nft address is Null",
+        errorMessage = "Nft address is uncorrected",
         serviceMethod1 = searchService::globalSearchNft
     )
 
@@ -34,7 +34,7 @@ class SearchControllerImpl(
     override suspend fun globalSearchAccount(@PathVariable domain: String ): SearchResponse = searchControllerHelper(
         firstArg = domain,
         secondArg = null,
-        errorMessage = "Domain name is Null",
+        errorMessage = "Domain name is uncorrected",
         serviceMethod1 = searchService::globalSearchAccount
     )
 
