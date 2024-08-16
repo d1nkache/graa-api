@@ -3,7 +3,7 @@ package backend.graabackend.retrofit
 import backend.graabackend.retrofit.endpoints.CollectionControllerTonApiEndpoints
 import backend.graabackend.retrofit.endpoints.SearchControllerTonApiEndpoints
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
+import io.github.cdimascio.dotenv.dotenv
 import org.springframework.context.annotation.Configuration
 import retrofit2.Retrofit
 
@@ -11,10 +11,11 @@ import retrofit2.Retrofit
 @Configuration
 class RetrofitConfig {
 //    private val dotenv = dotenv {
-//        directory = "/graa-backend"
+//        directory = "/app"
 //        filename = ".env"
 //    }
-    // val baseUrl = dotenv["TON_API_BASE_URL"]
+//
+//    val baseUrl = dotenv["TON_API_BASE_URL"]
     val baseUrl = "https://tonapi.io"
 
 //    val okHttpClient = OkHttpClient.Builder()

@@ -6,5 +6,7 @@ import retrofit2.http.Path
 
 interface CollectionControllerTonApiEndpoints {
     @GET("/v2/nfts/collections/{accountId}/items")
-    suspend fun getAllNftFromCollection(@Path("accountId") accountId: String): CollectionResponse.AllCollectionNftResponse?
+    suspend fun getAllNftFromCollection(@Path("accountId") accountId: String): CollectionResponse.NftItemsHelperResponse
+    @GET("/v2/nfts/collections/{accountId}")
+    suspend fun getCollectionMetadata(@Path("accountId") accountId: String): CollectionResponse.CollectionMetadataHelperResponse
 }
