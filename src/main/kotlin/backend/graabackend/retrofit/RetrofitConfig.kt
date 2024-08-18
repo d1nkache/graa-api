@@ -1,6 +1,7 @@
 package backend.graabackend.retrofit
 
 import backend.graabackend.retrofit.endpoints.CollectionControllerTonApiEndpoints
+import backend.graabackend.retrofit.endpoints.NftControllerTonApiEndpoints
 import backend.graabackend.retrofit.endpoints.SearchControllerTonApiEndpoints
 import retrofit2.converter.gson.GsonConverterFactory
 import io.github.cdimascio.dotenv.dotenv
@@ -22,25 +23,26 @@ class RetrofitConfig {
 //        .addInterceptor(AuthInterceptor("your-hardcoded-token"))
 //        .build()
 
-    fun buildCollectionRetrofitObject(): CollectionControllerTonApiEndpoints {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-//            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(CollectionControllerTonApiEndpoints::class.java)
+    fun buildNftRetrofitObject(): NftControllerTonApiEndpoints = Retrofit.Builder()
+        .baseUrl(baseUrl)
+//           .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(NftControllerTonApiEndpoints::class.java)
 
-        return retrofit
-    }
+    fun buildCollectionRetrofitObject(): CollectionControllerTonApiEndpoints = Retrofit.Builder()
+        .baseUrl(baseUrl)
+//           .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(CollectionControllerTonApiEndpoints::class.java)
 
-    fun buildSearchRetrofitObject(): SearchControllerTonApiEndpoints {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-//            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(SearchControllerTonApiEndpoints::class.java)
 
-        return retrofit
-    }
+    fun buildSearchRetrofitObject(): SearchControllerTonApiEndpoints = Retrofit.Builder()
+        .baseUrl(baseUrl)
+//           .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(SearchControllerTonApiEndpoints::class.java)
+
 }

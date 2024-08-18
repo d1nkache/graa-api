@@ -7,9 +7,11 @@ import backend.graabackend.service.CollectionService
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RestController("/collection")
+@RestController
+@RequestMapping("/collection")
 class CollectionControllerImpl(
     private val collectionService: CollectionService
 ) : CollectionController {

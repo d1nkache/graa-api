@@ -2,6 +2,9 @@ package backend.graabackend.model.response
 
 import org.springframework.http.HttpStatus
 
+
+// добавить иконку коллекции
+
 sealed class CollectionResponse {
     class GetCollectionFinalResponse(
         val collectionMetadata: CollectionMetadataHelperResponse,
@@ -9,7 +12,7 @@ sealed class CollectionResponse {
     ): CollectionResponse()
 
     class NftItemsHelperResponse(val nft_items: List<NftMetadataHelperResponse>): CollectionResponse()
-    class NftMetadataHelperResponse(val metadata: SearchResponse.MetadataResponse): CollectionResponse()
+    class NftMetadataHelperResponse(val metadata: SearchResponse.NftItemResponse): CollectionResponse()
     class CollectionOwnerHelperResponse(val address: String)
 
     class CollectionMetadataHelperResponse(

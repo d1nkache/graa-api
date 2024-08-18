@@ -1,15 +1,15 @@
 package backend.graabackend.service.impl
 
 import backend.graabackend.model.response.CollectionResponse
-import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.retrofit.RetrofitConfig
 import backend.graabackend.retrofit.endpoints.CollectionControllerTonApiEndpoints
 import backend.graabackend.service.CollectionService
-import backend.graabackend.service.SearchService
 import backend.graabackend.service.helpers.callCollectionMethod
-import backend.graabackend.service.helpers.callSearchMethod
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+
+
+// Надо детализировать ошибки
 
 @Service
 class CollectionServiceImpl : CollectionService {
@@ -24,8 +24,8 @@ class CollectionServiceImpl : CollectionService {
         firstArg = collectionAddress,
         secondArg = null,
         thirdArg = retrofitCollectionObject.getCollectionMetadata(collectionAddress),
-        callErrorMessage = "",
-        funcErrorMessage = "",
+        callErrorMessage = "Nft collection not found for the given address",
+        funcErrorMessage = "Error: There is some problems in callCollectionFunc ",
         endpoint1 = { address -> retrofitCollectionObject.getAllNftFromCollection(address) }
     )
 
@@ -35,8 +35,8 @@ class CollectionServiceImpl : CollectionService {
         firstArg = collectionAddress,
         secondArg = ascending,
         thirdArg = null,
-        callErrorMessage = "",
-        funcErrorMessage = "",
+        callErrorMessage = "Nft collection not found for the given address",
+        funcErrorMessage = "Error: There is some problems in callCollectionFunc",
         endpoint1 = {address -> retrofitCollectionObject.getAllNftFromCollection(address)},
     )
 }

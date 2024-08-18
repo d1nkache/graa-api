@@ -1,6 +1,5 @@
 package backend.graabackend.model.response
 
-import backend.graabackend.model.message.errors.AbstractErrorMessage
 import org.springframework.http.HttpStatus
 
 sealed class SearchResponse() {

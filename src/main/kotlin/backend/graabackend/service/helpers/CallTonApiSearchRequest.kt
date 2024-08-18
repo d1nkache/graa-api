@@ -17,8 +17,8 @@ suspend fun callSearchMethod(
     endpoint1: (suspend (String) -> SearchResponse.SearchItemResponse?)?,
     endpoint2: (suspend (String) -> SearchResponse.SearchAccountResponse?)?,
     endpoint3: (suspend (String) -> SearchResponse.LocalSearchItemResponse?)?
-): SearchResponse {
-    return try {
+): SearchResponse =
+    try {
         withContext(Dispatchers.IO) {
             if (endpoint1 != null) {
                 logger.info("Calling endpoint1 with argument: $arg")
@@ -73,6 +73,6 @@ suspend fun callSearchMethod(
         }
     } catch (e: Exception) {
         logger.error("Exception occurred: ${e.message}", e)
-        return SearchResponse.AbstractSearchErrorMessage(funcErrorMessage)
+        SearchResponse.AbstractSearchErrorMessage(funcErrorMessage)
     }
-}
+

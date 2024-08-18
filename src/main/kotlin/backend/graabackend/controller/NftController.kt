@@ -1,5 +1,7 @@
 package backend.graabackend.controller
 
+import backend.graabackend.model.response.NftResponse
+
 interface NftController {
-    fun getNft()
+    suspend fun getNft(nftAddress: String): NftResponse
 }
