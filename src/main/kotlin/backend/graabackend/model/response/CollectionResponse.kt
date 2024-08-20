@@ -14,15 +14,13 @@ sealed class CollectionResponse {
         val ownerAddress: String
     ): CollectionResponse()
 
-    // внести verified в collection metadata
     class GetCollectionFinalResponse(
-        val verified: Boolean,
+        val graaVerified: Boolean,
         val collectionMetadata: CollectionMetadataHelperResponse,
-        val nft_items: List<SearchResponse.NftItemResponse>
+        val nftItems: List<SearchResponse.NftItemResponse>
     ): CollectionResponse()
 
     class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
-    class NftMetadataHelperResponse(val metadata: SearchResponse.NftItemResponse): CollectionResponse()
     class CollectionOwnerHelperResponse(val address: String)
 
     class CollectionMetadataHelperResponse(
@@ -30,6 +28,7 @@ sealed class CollectionResponse {
         val metadata: SearchResponse.MetadataResponse,
 //        val floorPrice: Double,
         val owner: CollectionOwnerHelperResponse,
+        val approved_by: List<String>
     ): CollectionResponse()
 
     class AbstractCollectionErrorMessage(

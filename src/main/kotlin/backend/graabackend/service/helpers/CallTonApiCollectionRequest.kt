@@ -5,7 +5,7 @@ import backend.graabackend.model.response.CollectionResponse
 import backend.graabackend.model.response.SearchResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.springframework.beans.factory.annotation.Autowired
+
 
 
 suspend fun callCollectionMethod(
@@ -32,7 +32,7 @@ suspend fun callCollectionMethod(
                     println("Returning successful response with NFT items")
                     if (thirdArg != null) {
                         return@withContext CollectionResponse.GetCollectionFinalResponse(
-                            verified = when(verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress = firstArg)?.collectionAddress) {
+                            graaVerified = when(verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress = firstArg)?.collectionAddress) {
                                 firstArg -> true
                                 else -> false
                             },
@@ -40,10 +40,10 @@ suspend fun callCollectionMethod(
                                 address = thirdArg.address,
                                 metadata = thirdArg.metadata,
 //                                floorPrice = thirdArg.floorPrice,
-
-                                owner = thirdArg.owner
+                                owner = thirdArg.owner,
+                                approved_by = thirdArg.approved_by
                             ),
-                            nft_items = endpointResponse.nft_items
+                            nftItems = endpointResponse.nft_items
                         )
                     }
                     return@withContext CollectionResponse.AbstractCollectionErrorMessage(message = callErrorMessage)
