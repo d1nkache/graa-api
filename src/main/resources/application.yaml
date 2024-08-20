@@ -1,6 +1,6 @@
 spring:
   application:
-    name: graa-backend
+    name: graa-backen
 
 server:
   port: 8000
