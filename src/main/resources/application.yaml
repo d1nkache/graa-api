@@ -1,11 +1,6 @@
 spring:
   application:
     name: graa-backend
-  datasource:
-    url: "jdbc:postgresql://localhost:5432/graa-database"
-    username: "postgres"
-    password: "root"
-
 
 server:
   port: 8000
