@@ -29,14 +29,16 @@ class CollectionServiceImpl(
         retrofitCollectionBuilder.buildCollectionRetrofitObject()
     }
 
-    override suspend fun getCollection(collectionAddress: String): CollectionResponse = callCollectionMethod(
+    override suspend fun getCollection(collectionAddress: String, pageNumber: Int, pageSize: Int): CollectionResponse = callCollectionMethod(
         firstArg = collectionAddress,
         secondArg = null,
         thirdArg = retrofitCollectionObject.getCollectionMetadata(collectionAddress),
         callErrorMessage = "Nft collection not found for the given address",
         funcErrorMessage = "Error: There is some problems in callCollectionFunc ",
         endpoint1 = { address -> retrofitCollectionObject.getAllNftFromCollection(address) },
-        verifiedCollectionsDao = verifiedCollectionsDao
+        verifiedCollectionsDao = verifiedCollectionsDao,
+        pageNumber = pageNumber,
+        pageSize = pageSize
     )
 
     override suspend fun sortCollectionByPrice(ascending: Boolean, collectionAddress: String): CollectionResponse = callCollectionMethod(
@@ -46,7 +48,9 @@ class CollectionServiceImpl(
         callErrorMessage = "Nft collection not found for the given address",
         funcErrorMessage = "Error: There is some problems in callCollectionFunc",
         endpoint1 = { address -> retrofitCollectionObject.getAllNftFromCollection(address) },
-        verifiedCollectionsDao = verifiedCollectionsDao
+        verifiedCollectionsDao = verifiedCollectionsDao,
+        pageNumber = -1,
+        pageSize = 0
     )
 
     //ОБРАТИТЬ ВНИМАНИЕ НАДО НА ТО ЧТО АДРЕС МОЖЕТ БЫТЬ РАЗНЫХ ФОРМАТОВ

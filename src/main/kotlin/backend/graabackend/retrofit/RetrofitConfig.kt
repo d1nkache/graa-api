@@ -5,6 +5,7 @@ import backend.graabackend.retrofit.endpoints.NftControllerTonApiEndpoints
 import backend.graabackend.retrofit.endpoints.SearchControllerTonApiEndpoints
 import retrofit2.converter.gson.GsonConverterFactory
 import io.github.cdimascio.dotenv.dotenv
+import okhttp3.OkHttpClient
 import org.springframework.context.annotation.Configuration
 import retrofit2.Retrofit
 
@@ -32,7 +33,7 @@ class RetrofitConfig {
 
     fun buildCollectionRetrofitObject(): CollectionControllerTonApiEndpoints = Retrofit.Builder()
         .baseUrl(baseUrl)
-//           .client(okHttpClient)
+//        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(CollectionControllerTonApiEndpoints::class.java)

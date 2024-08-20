@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController
 class CollectionControllerImpl(
     private val collectionService: CollectionService
 ) : CollectionController {
-    @GetMapping("/get/{collectionAddress}")
+    @GetMapping("/get/{collectionAddress}/page/{pageNumber}/page-size/{pageSize}")
     @CrossOrigin(origins = ["*"], maxAge = 3600)
-    override suspend fun getCollection(@PathVariable collectionAddress: String): CollectionResponse = collectionControllerHelper(
+    override suspend fun getCollection(@PathVariable collectionAddress: String, @PathVariable pageNumber: Int, @PathVariable pageSize: Int): CollectionResponse = collectionControllerHelper(
         firstArg = collectionAddress,
         secondArg = null,
+        pageNumber = pageNumber,
+        pageSize = pageSize,
         errorMessage = "Collection address is uncorrected",
         serviceMethod1 = collectionService::getCollection,
         serviceMethod2 = null

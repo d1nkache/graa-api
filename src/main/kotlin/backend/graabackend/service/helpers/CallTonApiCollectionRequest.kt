@@ -15,7 +15,9 @@ suspend fun callCollectionMethod(
     callErrorMessage: String,
     funcErrorMessage: String,
     endpoint1: suspend (String) -> CollectionResponse.NftItemsHelperResponse,
-    verifiedCollectionsDao: VerifiedCollectionsDao
+    verifiedCollectionsDao: VerifiedCollectionsDao,
+    pageNumber: Int,
+    pageSize: Int
 ): CollectionResponse {
     return try {
         withContext(Dispatchers.IO) {
@@ -29,6 +31,9 @@ suspend fun callCollectionMethod(
                     println("SecondArg is not null, but this condition is not implemented yet.")
                     return@withContext CollectionResponse.AbstractCollectionErrorMessage(message = "Not impl yet")
                 } else {
+                    val paginatedItems = endpointResponse.nft_items
+                        .drop(pageNumber * pageSize)
+                        .take(pageSize)
                     println("Returning successful response with NFT items")
                     if (thirdArg != null) {
                         return@withContext CollectionResponse.GetCollectionFinalResponse(
@@ -43,7 +48,7 @@ suspend fun callCollectionMethod(
                                 owner = thirdArg.owner,
                                 approved_by = thirdArg.approved_by
                             ),
-                            nftItems = endpointResponse.nft_items
+                            nftItems = paginatedItems
                         )
                     }
                     return@withContext CollectionResponse.AbstractCollectionErrorMessage(message = callErrorMessage)
