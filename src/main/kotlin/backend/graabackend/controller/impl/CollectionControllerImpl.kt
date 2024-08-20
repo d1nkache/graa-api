@@ -25,6 +25,18 @@ class CollectionControllerImpl(
         serviceMethod2 = null
     )
 
+    @GetMapping("/add-to-verified/{collectionAddress}")
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    override suspend fun verifyCollection(@PathVariable collectionAddress: String): CollectionResponse = collectionService.verifiedCollection(
+        collectionAddress = collectionAddress
+    )
+
+    @GetMapping("/delete-from-verified/{collectionAddress}")
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    override fun deleteCollectionFromVerified(@PathVariable collectionAddress: String): CollectionResponse = collectionService.deleteCollectionFromVerified(
+        collectionAddress = collectionAddress
+    )
+
 //    @GetMapping("/sort/{ascending}")
 //    @CrossOrigin(origins = ["*"], maxAge = 3600)
 //    override suspend fun sortCollectionByPrice(@PathVariable ascending: Boolean): CollectionResponse = collectionControllerHelper(

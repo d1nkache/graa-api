@@ -24,7 +24,7 @@ class SearchServiceImpl : SearchService {
             arg = listOf(collectionAddress),
             callErrorMessage = "NFT collection not found for the given address",
             funcErrorMessage = "An error occurred while fetching the NFT collection",
-            endpoint1 = {address -> retrofitSearchObject.getNftCollection(address)},
+            endpoint1 = { address -> retrofitSearchObject.getNftCollection(address) },
             endpoint2 = null,
             endpoint3 = null
     )
@@ -33,7 +33,7 @@ class SearchServiceImpl : SearchService {
         arg = listOf(nftAddress),
         callErrorMessage = "NFT not found for the given address",
         funcErrorMessage = "An error occurred while fetching the NFT",
-        endpoint1 = {address -> retrofitSearchObject.getNft(address)},
+        endpoint1 = { address -> retrofitSearchObject.getNft(address) },
         endpoint2 = null,
         endpoint3 = null
     )
@@ -43,7 +43,7 @@ class SearchServiceImpl : SearchService {
         callErrorMessage = "Account not found for the given address",
         funcErrorMessage = "An error occurred while fetching the Account",
         endpoint1 = null,
-        endpoint2 = {address -> retrofitSearchObject.getAccount(address)},
+        endpoint2 = { address -> retrofitSearchObject.getAccount(address) },
         endpoint3 = null
     )
 

@@ -1,9 +1,12 @@
 package backend.graabackend.service.helpers
 
+import backend.graabackend.database.dao.VerifiedCollectionsDao
 import backend.graabackend.model.response.CollectionResponse
 import backend.graabackend.model.response.SearchResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.beans.factory.annotation.Autowired
+
 
 suspend fun callCollectionMethod(
     firstArg: String?,
@@ -11,7 +14,8 @@ suspend fun callCollectionMethod(
     thirdArg: CollectionResponse.CollectionMetadataHelperResponse?,
     callErrorMessage: String,
     funcErrorMessage: String,
-    endpoint1: suspend (String) -> CollectionResponse.NftItemsHelperResponse
+    endpoint1: suspend (String) -> CollectionResponse.NftItemsHelperResponse,
+    verifiedCollectionsDao: VerifiedCollectionsDao
 ): CollectionResponse {
     return try {
         withContext(Dispatchers.IO) {
@@ -28,10 +32,15 @@ suspend fun callCollectionMethod(
                     println("Returning successful response with NFT items")
                     if (thirdArg != null) {
                         return@withContext CollectionResponse.GetCollectionFinalResponse(
+                            verified = when(verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress = firstArg)?.collectionAddress) {
+                                firstArg -> true
+                                else -> false
+                            },
                             collectionMetadata = CollectionResponse.CollectionMetadataHelperResponse(
                                 address = thirdArg.address,
                                 metadata = thirdArg.metadata,
 //                                floorPrice = thirdArg.floorPrice,
+
                                 owner = thirdArg.owner
                             ),
                             nft_items = endpointResponse.nft_items

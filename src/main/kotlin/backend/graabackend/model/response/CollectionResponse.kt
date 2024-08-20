@@ -1,12 +1,22 @@
 package backend.graabackend.model.response
 
 import org.springframework.http.HttpStatus
+import org.springframework.security.config.http.SessionCreationPolicy
+import java.time.LocalDateTime
 
 
 // добавить иконку коллекции
 
 sealed class CollectionResponse {
+    class CollectionEntityFinalResponse(
+        val collectionName: String,
+        val collectionAddress:  String,
+        val ownerAddress: String
+    ): CollectionResponse()
+
+    // внести verified в collection metadata
     class GetCollectionFinalResponse(
+        val verified: Boolean,
         val collectionMetadata: CollectionMetadataHelperResponse,
         val nft_items: List<NftMetadataHelperResponse>
     ): CollectionResponse()

@@ -19,8 +19,8 @@ class NftServiceImpl() : NftService {
 
     override suspend fun getNft(nftAddress: String): NftResponse = callNftMethod(
         arg = nftAddress,
-        callErrorMessage = "",
-        funcErrorMessage = "",
+        callErrorMessage = "Nft collection not found for the given address",
+        funcErrorMessage = "An error occurred while fetching the nft collection",
         getNftInfoEndpoint = { address -> retrofitCollectionObject.getNft(address) },
         getCollectionInfoEndpoint = { address -> retrofitCollectionObject.getCollectionMetadata(address) }
     )
