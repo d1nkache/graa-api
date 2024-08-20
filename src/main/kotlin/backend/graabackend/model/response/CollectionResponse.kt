@@ -18,10 +18,10 @@ sealed class CollectionResponse {
     class GetCollectionFinalResponse(
         val verified: Boolean,
         val collectionMetadata: CollectionMetadataHelperResponse,
-        val nft_items: List<NftMetadataHelperResponse>
+        val nft_items: List<SearchResponse.NftItemResponse>
     ): CollectionResponse()
 
-    class NftItemsHelperResponse(val nft_items: List<NftMetadataHelperResponse>): CollectionResponse()
+    class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
     class NftMetadataHelperResponse(val metadata: SearchResponse.NftItemResponse): CollectionResponse()
     class CollectionOwnerHelperResponse(val address: String)
 
