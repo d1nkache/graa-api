@@ -1,5 +1,7 @@
 package backend.graabackend.service.helpers
 
+import backend.graabackend.database.dao.NftsDao
+import backend.graabackend.database.entities.Nfts
 import backend.graabackend.model.response.SearchResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory
 
 
 // тут что-то странное - почему оно раблотает с двумя return
+// проёбка тут - переделать надо тут всё по хорошему
 private val logger: Logger = LoggerFactory.getLogger("backend.graabackend.service.helpers")
 
 suspend fun callSearchMethod(
@@ -16,13 +19,13 @@ suspend fun callSearchMethod(
     funcErrorMessage: String,
     endpoint1: (suspend (String) -> SearchResponse.SearchItemResponse?)?,
     endpoint2: (suspend (String) -> SearchResponse.SearchAccountResponse?)?,
-    endpoint3: (suspend (String) -> SearchResponse.LocalSearchItemResponse?)?
+    nftsDao: NftsDao?
 ): SearchResponse =
     try {
         withContext(Dispatchers.IO) {
             if (endpoint1 != null) {
                 logger.info("Calling endpoint1 with argument: $arg")
-                val endpointResponse = endpoint1(arg[0])
+                val endpointResponse = arg[0]?.let { endpoint1(it) }
                 if (endpointResponse != null) {
                     logger.info("Received successful response from endpoint1")
                     return@withContext SearchResponse.MetadataResponse(
@@ -38,7 +41,7 @@ suspend fun callSearchMethod(
 
             if (endpoint2 != null) {
                 logger.info("Calling endpoint2 with argument: $arg")
-                val endpointResponse = endpoint2(arg[0])
+                val endpointResponse = arg[0]?.let { endpoint2(it) }
                 if (endpointResponse != null) {
                     logger.info("Received successful response from endpoint2")
                     return@withContext SearchResponse.SearchAccountResponse(name = endpointResponse.name, icon = endpointResponse.icon)
@@ -48,18 +51,28 @@ suspend fun callSearchMethod(
                 }
             }
 
-            if (endpoint3 != null) {
+            if (nftsDao != null) {
                 logger.info("Calling endpoint3 with argument: $arg")
-                val endpointResponse = endpoint3(arg[0])
+                val endpointResponse = arg[0]?.let { ownerAddress -> nftsDao.findAllyByNftOwnerAddress(nftOwnerAddress = ownerAddress) }
                 if (endpointResponse != null) {
-                    logger.info("Received successful response from endpoint3")
-                    val allUserNfts = SearchResponse.LocalSearchItemResponse(nft_items = endpointResponse.nft_items)
-                    allUserNfts.nft_items.forEach {
-                        if (it.address == arg[1]) {
-                            logger.info("NFT found with address: ${it.address}")
-                            return@withContext it.metadata
+                    logger.info("Received successful response from database")
+
+                    if (arg[1] != "null") {
+                        for (elem in endpointResponse) {
+                            if (elem.nftAddress == arg[1]) return@withContext SearchResponse.MetadataResponse(
+                                name = elem.nftName,
+                                description = elem.nftDescription,
+                                image = elem.nftImage
+                            )
                         }
                     }
+
+                    if (arg[2] != "null") {
+                        return@withContext SearchResponse.GetListOfSimilarNfts(
+                            similarNfts = nftsDao.findByNameContaining(arg[2])
+                        )
+                    }
+
                     logger.error("Error: No such NFT found")
                     return@withContext SearchResponse.AbstractSearchErrorMessage(callErrorMessage)
                 } else {

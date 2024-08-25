@@ -5,14 +5,13 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 
 @Entity
-class VerifiedCollections (
+class Collections (
     @Column
-    val collectionName: String?,
+    val  collectionAddress: String,
 
-    @Column(nullable = false)
-    val collectionAddress: String,
+    @Column
+    val collectionOwner: String,
 
-    @Column(nullable = false)
-    val ownerAddress: String
-
+    @Column
+    val collectionName: String,
 ): AbstractEntity()

@@ -59,9 +59,13 @@ dependencies {
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+	//graphql-client
+	implementation("com.expediagroup:graphql-kotlin-spring-client:6.0.0")
+
 	//База Данных
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
 	runtimeOnly("org.postgresql:postgresql")
 
 	//Безопасность

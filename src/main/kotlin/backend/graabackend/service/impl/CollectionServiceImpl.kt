@@ -1,5 +1,6 @@
 package backend.graabackend.service.impl
 
+import backend.graabackend.database.dao.NftsDao
 import backend.graabackend.database.dao.VerifiedCollectionsDao
 import backend.graabackend.database.entities.VerifiedCollections
 import backend.graabackend.model.response.CollectionResponse
@@ -20,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CollectionServiceImpl(
-    private val verifiedCollectionsDao: VerifiedCollectionsDao
+    private val verifiedCollectionsDao: VerifiedCollectionsDao,
+    private val nftsDao: NftsDao
 ) : CollectionService {
     @Autowired
     lateinit var retrofitCollectionBuilder: RetrofitConfig
@@ -37,6 +39,7 @@ class CollectionServiceImpl(
         funcErrorMessage = "Error: There is some problems in callCollectionFunc ",
         endpoint1 = { address -> retrofitCollectionObject.getAllNftFromCollection(address) },
         verifiedCollectionsDao = verifiedCollectionsDao,
+        nftDao = nftsDao,
         pageNumber = pageNumber,
         pageSize = pageSize
     )
@@ -49,6 +52,7 @@ class CollectionServiceImpl(
         funcErrorMessage = "Error: There is some problems in callCollectionFunc",
         endpoint1 = { address -> retrofitCollectionObject.getAllNftFromCollection(address) },
         verifiedCollectionsDao = verifiedCollectionsDao,
+        nftDao = nftsDao,
         pageNumber = -1,
         pageSize = 0
     )

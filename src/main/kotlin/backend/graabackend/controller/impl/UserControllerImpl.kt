@@ -1,11 +1,22 @@
 package backend.graabackend.controller.impl
 
 import backend.graabackend.controller.UserController
+import backend.graabackend.model.response.UserResponse
+import backend.graabackend.service.UserService
+import org.springframework.web.bind.annotation.*
 
-class UserControllerImpl : UserController {
-    override fun addNewUser(): Any {
-        TODO("Not yet implemented")
-    }
+@RestController
+@RequestMapping("/users")
+class UserControllerImpl(
+    private val userService: UserService
+) : UserController {
+    @PostMapping("/add/{walletAddress}")
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    override suspend fun addNewUser(@PathVariable walletAddress: String): UserResponse = userService.addNewUser(walletAddress)
+
+    @PutMapping("/update/{walletAddress}")
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    override suspend fun updateUserInfo(@PathVariable walletAddress: String): UserResponse = userService.updateUserInfo(walletAddress)
 
     override fun deleteUser(): Any {
         TODO("Not yet implemented")

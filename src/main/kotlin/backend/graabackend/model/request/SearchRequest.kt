@@ -1,6 +1,6 @@
 package backend.graabackend.model.request
 
 class SearchRequest (
-    val address: String,
-    val description: String
+    val address: String?,
+    val name: String?
 )

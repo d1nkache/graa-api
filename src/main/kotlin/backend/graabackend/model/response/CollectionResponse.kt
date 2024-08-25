@@ -9,24 +9,24 @@ import java.time.LocalDateTime
 
 sealed class CollectionResponse {
     class CollectionEntityFinalResponse(
-        val collectionName: String,
+        val collectionName: String?,
         val collectionAddress:  String,
         val ownerAddress: String
     ): CollectionResponse()
 
     class GetCollectionFinalResponse(
         val graaVerified: Boolean,
+        val floorPrice: Long,
         val collectionMetadata: CollectionMetadataHelperResponse,
         val nftItems: List<SearchResponse.NftItemResponse>
     ): CollectionResponse()
 
     class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
-    class CollectionOwnerHelperResponse(val address: String)
+    class CollectionOwnerHelperResponse(val address: String): CollectionResponse()
 
     class CollectionMetadataHelperResponse(
         val address: String,
         val metadata: SearchResponse.MetadataResponse,
-//        val floorPrice: Double,
         val owner: CollectionOwnerHelperResponse,
         val approved_by: List<String>
     ): CollectionResponse()

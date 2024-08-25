@@ -4,11 +4,7 @@ import backend.graabackend.controller.CollectionController
 import backend.graabackend.controller.helpers.collectionControllerHelper
 import backend.graabackend.model.response.CollectionResponse
 import backend.graabackend.service.CollectionService
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/collection")
@@ -27,13 +23,13 @@ class CollectionControllerImpl(
         serviceMethod2 = null
     )
 
-    @GetMapping("/add-to-verified/{collectionAddress}")
+    @PostMapping("/add-to-verified/{collectionAddress}")
     @CrossOrigin(origins = ["*"], maxAge = 3600)
     override suspend fun verifyCollection(@PathVariable collectionAddress: String): CollectionResponse = collectionService.verifiedCollection(
         collectionAddress = collectionAddress
     )
 
-    @GetMapping("/delete-from-verified/{collectionAddress}")
+    @PostMapping("/delete-from-verified/{collectionAddress}")
     @CrossOrigin(origins = ["*"], maxAge = 3600)
     override fun deleteCollectionFromVerified(@PathVariable collectionAddress: String): CollectionResponse = collectionService.deleteCollectionFromVerified(
         collectionAddress = collectionAddress

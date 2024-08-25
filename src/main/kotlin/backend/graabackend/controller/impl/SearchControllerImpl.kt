@@ -2,6 +2,7 @@ package backend.graabackend.controller.impl
 
 import backend.graabackend.controller.SearchController
 import backend.graabackend.controller.helpers.searchControllerHelper
+import backend.graabackend.model.request.SearchRequest
 import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.service.SearchService
 import org.springframework.web.bind.annotation.*
@@ -16,6 +17,7 @@ class SearchControllerImpl(
     override suspend fun globalSearchCollection(@PathVariable collectionAddress: String): SearchResponse = searchControllerHelper(
         firstArg = collectionAddress,
         secondArg = null,
+        thirdArg = null,
         errorMessage = "Collection address is uncorrected",
         serviceMethod1 = searchService::globalSearchCollection
     )
@@ -25,6 +27,7 @@ class SearchControllerImpl(
     override suspend fun globalSearchNft(@PathVariable nftAddress: String): SearchResponse = searchControllerHelper(
         firstArg = nftAddress,
         secondArg = null,
+        thirdArg = null,
         errorMessage = "Nft address is uncorrected",
         serviceMethod1 = searchService::globalSearchNft
     )
@@ -34,15 +37,17 @@ class SearchControllerImpl(
     override suspend fun globalSearchAccount(@PathVariable domain: String ): SearchResponse = searchControllerHelper(
         firstArg = domain,
         secondArg = null,
+        thirdArg = null,
         errorMessage = "Domain name is uncorrected",
         serviceMethod1 = searchService::globalSearchAccount
     )
 
-    @GetMapping("/local-search/nft/{accountId}/{nftAddress}")
+    @GetMapping("/local-search/nft/{accountId}")
     @CrossOrigin(origins = ["*"], maxAge = 3600)
-    override suspend fun localSearchNft(@PathVariable accountId: String, @PathVariable nftAddress: String): SearchResponse = searchControllerHelper(
+    override suspend fun localSearchNft(@PathVariable accountId: String, @RequestBody searchRequest: SearchRequest): SearchResponse = searchControllerHelper(
         firstArg = accountId,
-        secondArg = nftAddress,
+        secondArg = searchRequest.address,
+        thirdArg = searchRequest.name,
         errorMessage = "Nft Address is uncorrected",
         serviceMethod2 = searchService::localSearchNft
     )
