@@ -1,0 +1,33 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+     - name: Run command on remote server
+       uses: appleboy/ssh-action@v1.0.0
+       env:
+          ENV: ${{vars.ENV}}
+       with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          envs: ENV
+          script: |
+            cd /root/app/graa-api
+            cat <<< $ENV > .env
+            chmod +x update.sh
+            ./update.sh
