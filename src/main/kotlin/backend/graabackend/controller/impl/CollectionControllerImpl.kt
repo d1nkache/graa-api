@@ -29,7 +29,7 @@ class CollectionControllerImpl(
         collectionAddress = collectionAddress
     )
 
-    @PostMapping("/delete-from-verified/{collectionAddress}")
+    @DeleteMapping("/delete-from-verified/{collectionAddress}")
     @CrossOrigin(origins = ["*"], maxAge = 3600)
     override fun deleteCollectionFromVerified(@PathVariable collectionAddress: String): CollectionResponse = collectionService.deleteCollectionFromVerified(
         collectionAddress = collectionAddress
