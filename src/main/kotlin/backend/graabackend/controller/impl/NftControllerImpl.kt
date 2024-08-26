@@ -12,7 +12,7 @@ class NftControllerImpl(
     private val nftService: NftService
 ) : NftController {
     @GetMapping("/get/{nftAddress}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun getNft(@PathVariable nftAddress: String): NftResponse = nftControllerHelper(
         firstArg = nftAddress,
         errorMessage = "",
@@ -20,6 +20,6 @@ class NftControllerImpl(
     )
 
     @PostMapping("/updateNftPrice/{nftAddress}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun updateNftPrice(@PathVariable nftAddress: String): NftResponse = nftService.updateNftPrice(nftAddress)
 }

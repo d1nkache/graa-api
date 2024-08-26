@@ -13,7 +13,7 @@ class SearchControllerImpl(
     private val searchService: SearchService
 ) : SearchController {
     @GetMapping("/collection/{collectionAddress}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun globalSearchCollection(@PathVariable collectionAddress: String): SearchResponse = searchControllerHelper(
         firstArg = collectionAddress,
         secondArg = null,
@@ -33,7 +33,7 @@ class SearchControllerImpl(
     )
 
     @GetMapping("/account/{domain}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun globalSearchAccount(@PathVariable domain: String ): SearchResponse = searchControllerHelper(
         firstArg = domain,
         secondArg = null,
@@ -43,7 +43,7 @@ class SearchControllerImpl(
     )
 
     @GetMapping("/local-search/nft/{accountId}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun localSearchNft(@PathVariable accountId: String, @RequestBody searchRequest: SearchRequest): SearchResponse = searchControllerHelper(
         firstArg = accountId,
         secondArg = searchRequest.address,

@@ -11,11 +11,11 @@ class UserControllerImpl(
     private val userService: UserService
 ) : UserController {
     @PostMapping("/add/{walletAddress}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun addNewUser(@PathVariable walletAddress: String): UserResponse = userService.addNewUser(walletAddress)
 
     @PutMapping("/update/{walletAddress}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun updateUserInfo(@PathVariable walletAddress: String): UserResponse = userService.updateUserInfo(walletAddress)
 
     override fun deleteUser(): Any {

@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class HealthControllerImpl : HealthController {
     @GetMapping("/health")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override fun getServerHealthState(): HealthMessage = HealthMessage()
 }
