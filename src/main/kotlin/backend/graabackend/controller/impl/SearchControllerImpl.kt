@@ -23,7 +23,7 @@ class SearchControllerImpl(
     )
 
     @GetMapping("/nft/{nftAddress}")
-    @CrossOrigin(origins = ["*"], maxAge = 3600)
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun globalSearchNft(@PathVariable nftAddress: String): SearchResponse = searchControllerHelper(
         firstArg = nftAddress,
         secondArg = null,
