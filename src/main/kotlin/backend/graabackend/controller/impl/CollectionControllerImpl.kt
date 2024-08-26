@@ -12,7 +12,7 @@ class CollectionControllerImpl(
     private val collectionService: CollectionService
 ) : CollectionController {
     @GetMapping("/get/{collectionAddress}/page/{pageNumber}/page-size/{pageSize}")
-    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
     override suspend fun getCollection(@PathVariable collectionAddress: String, @PathVariable pageNumber: Int, @PathVariable pageSize: Int): CollectionResponse = collectionControllerHelper(
         firstArg = collectionAddress,
         secondArg = null,
@@ -24,13 +24,13 @@ class CollectionControllerImpl(
     )
 
     @PostMapping("/add-to-verified/{collectionAddress}")
-    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
     override suspend fun verifyCollection(@PathVariable collectionAddress: String): CollectionResponse = collectionService.verifiedCollection(
         collectionAddress = collectionAddress
     )
 
-    @DeleteMapping("/delete-from-verified/{collectionAddress}")
-    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
+    @PostMapping("/delete-from-verified/{collectionAddress}")
+    @CrossOrigin(origins = ["*"], maxAge = 3600)
     override fun deleteCollectionFromVerified(@PathVariable collectionAddress: String): CollectionResponse = collectionService.deleteCollectionFromVerified(
         collectionAddress = collectionAddress
     )
