@@ -22,4 +22,8 @@ class NftControllerImpl(
     @PostMapping("/updateNftPrice/{nftAddress}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
     override suspend fun updateNftPrice(@PathVariable nftAddress: String): NftResponse = nftService.updateNftPrice(nftAddress)
+
+    @PostMapping("/sell-nft/{nftAddress}/{transactionHash}")
+    override suspend fun sellNft(@PathVariable nftAddress: String, @PathVariable transactionHash: String): NftResponse =
+        nftService.sellNft(nftAddress, transactionHash)
 }

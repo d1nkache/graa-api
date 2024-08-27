@@ -1,7 +1,5 @@
 package backend.graabackend.service.impl
 
-import kotlin.math.pow
-
 
 import backend.graabackend.database.dao.NftsDao
 import backend.graabackend.model.request.GraphqlRequest
@@ -10,10 +8,13 @@ import backend.graabackend.retrofit.RetrofitConfig
 import backend.graabackend.retrofit.endpoints.NftControllerGraphqlEndpoints
 import backend.graabackend.retrofit.endpoints.NftControllerTonApiEndpoints
 import backend.graabackend.service.NftService
+import backend.graabackend.service.helpers.extractBits
+import ch.qos.logback.core.encoder.ByteArrayUtil.hexStringToByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -111,6 +112,27 @@ class NftServiceImpl(
             }
 
             return@withContext NftResponse.AbstractNftErrorMessage("Error: Sale Smart Contract was not deploy successfully")
+        }
+    }
+
+    override suspend fun sellNft(nftAddress: String, transactionHash: String): NftResponse {
+        val byteArray = hexStringToByteArray(transactionHash)
+        val first4Bits = extractBits(byteArray, 0, 4)
+        val result = first4Bits and 1
+
+        if (result == 1) {
+            val dealNft = withContext(Dispatchers.IO) {
+                nftsDao.findEntityByNftAddress(nftAddress = nftAddress)
+            }
+            
+            if (dealNft != null) {
+                dealNft.nftTonPrice = -1
+            }
+
+            return NftResponse.AbstractNftErrorMessage("Transaction has success status", status = HttpStatus.OK)
+        }
+        else {
+            return NftResponse.AbstractNftErrorMessage("Transaction was not success")
         }
     }
 }
