@@ -56,10 +56,15 @@ suspend fun callSearchMethod(
                 val endpointResponse = arg[0]?.let { ownerAddress -> nftsDao.findAllyByNftOwnerAddress(nftOwnerAddress = ownerAddress) }
                 if (endpointResponse != null) {
                     logger.info("Received successful response from database")
+                    var resultSearchAsNftAddress: SearchResponse.MetadataResponse = SearchResponse.MetadataResponse(
+                        name = "",
+                        image = "",
+                        description = ""
+                    )
 
-                    if (arg[1] != "null") {
-                        for (elem in endpointResponse) {
-                            if (elem.nftAddress == arg[1]) return@withContext SearchResponse.MetadataResponse(
+                    for (elem in endpointResponse) {
+                        if (elem.nftAddress == arg[1]) {
+                            resultSearchAsNftAddress = SearchResponse.MetadataResponse(
                                 name = elem.nftName,
                                 description = elem.nftDescription,
                                 image = elem.nftImage
@@ -67,14 +72,25 @@ suspend fun callSearchMethod(
                         }
                     }
 
-                    if (arg[2] != "null") {
-                        return@withContext SearchResponse.GetListOfSimilarNfts(
-                            similarNfts = nftsDao.findByNameContaining(arg[2])
+                    val helperResultSearchAsNftName =  SearchResponse.GetListOfSimilarNfts(
+                        similarNfts = nftsDao.findByNameContaining(arg[1])
+                    )
+
+                    val resultSearchAsNftName: MutableList<SearchResponse.MetadataResponse> = mutableListOf()
+
+                    for (elem in helperResultSearchAsNftName.similarNfts) {
+                        resultSearchAsNftName.add(SearchResponse.MetadataResponse(
+                            name = elem.nftName,
+                            description = elem.nftDescription,
+                            image = elem.nftImage
+                            )
                         )
                     }
 
-                    logger.error("Error: No such NFT found")
-                    return@withContext SearchResponse.AbstractSearchErrorMessage(callErrorMessage)
+                    return@withContext SearchResponse.LocalSearchFinalResponse(
+                        resultSearchAsNftAddress = resultSearchAsNftAddress,
+                        resultSearchAsNftName = resultSearchAsNftName
+                    )
                 } else {
                     logger.warn("Received null response from endpoint3")
                     return@withContext SearchResponse.AbstractSearchErrorMessage(callErrorMessage)

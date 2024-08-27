@@ -42,12 +42,12 @@ class SearchControllerImpl(
         serviceMethod1 = searchService::globalSearchAccount
     )
 
-    @GetMapping("/local-search/nft/{accountId}")
+    @GetMapping("/local-search/nft/{accountId}/{searchString}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override suspend fun localSearchNft(@PathVariable accountId: String, @RequestBody searchRequest: SearchRequest): SearchResponse = searchControllerHelper(
+    override suspend fun localSearchNft(@PathVariable accountId: String, @PathVariable searchString: String): SearchResponse = searchControllerHelper(
         firstArg = accountId,
-        secondArg = searchRequest.address,
-        thirdArg = searchRequest.name,
+        secondArg = searchString,
+        thirdArg = null,
         errorMessage = "Nft Address is uncorrected",
         serviceMethod2 = searchService::localSearchNft
     )

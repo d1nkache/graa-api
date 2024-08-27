@@ -7,6 +7,6 @@ interface SearchController {
     suspend fun globalSearchCollection(collectionAddress: String): SearchResponse
     suspend fun globalSearchNft(nftAddress: String): SearchResponse
     suspend fun globalSearchAccount(domain: String): SearchResponse
-    suspend fun localSearchNft(accountId: String, searchRequest: SearchRequest): SearchResponse
+    suspend fun localSearchNft(accountId: String, searchString: String): SearchResponse
 }
 

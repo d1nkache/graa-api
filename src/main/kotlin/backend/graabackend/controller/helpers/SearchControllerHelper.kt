@@ -1,6 +1,5 @@
 package backend.graabackend.controller.helpers
 
-import backend.graabackend.model.message.errors.AbstractSearchErrorMessage
 import backend.graabackend.model.response.SearchResponse
 
 suspend fun searchControllerHelper(
@@ -9,10 +8,10 @@ suspend fun searchControllerHelper(
     thirdArg: String?,
     errorMessage: String,
     serviceMethod1: (suspend (String) -> SearchResponse)? = null,
-    serviceMethod2: (suspend (String, String, String) -> SearchResponse)? = null
+    serviceMethod2: (suspend (String, String) -> SearchResponse)? = null
 ): SearchResponse {
-    if (!firstArg.isNullOrEmpty() && !secondArg.isNullOrEmpty() && !thirdArg.isNullOrEmpty()) if (serviceMethod2 != null) {
-        return serviceMethod2(firstArg, secondArg, thirdArg)
+    if (!firstArg.isNullOrEmpty() && !secondArg.isNullOrEmpty()) if (serviceMethod2 != null) {
+        return serviceMethod2(firstArg, secondArg)
     }
     firstArg?.takeIf { it.isNotEmpty() }?.let {
         if (serviceMethod1 != null) {

@@ -50,8 +50,8 @@ class SearchServiceImpl(
         nftsDao = null
     )
 
-    override suspend fun localSearchNft(accountId: String, nftAddress: String, nftName: String): SearchResponse = callSearchMethod(
-        arg = listOf(accountId, nftAddress, nftName),
+    override suspend fun localSearchNft(accountId: String, searchString: String): SearchResponse = callSearchMethod(
+        arg = listOf(accountId, searchString),
         callErrorMessage = "Account not found for the given address",
         funcErrorMessage = "An error occurred while fetching the NFT collection",
         endpoint1 = null,
