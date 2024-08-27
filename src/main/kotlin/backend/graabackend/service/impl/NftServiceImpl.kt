@@ -79,9 +79,9 @@ class NftServiceImpl(
 
                     if (lastNftResponse.success) {
                         if (lastNftResponse.stack[0].num == fixedPriceNum) {
-                            val currentNftEntity = nftsDao.findEntryByNftAddress(nftAddress)
+                            val currentNftEntity = nftsDao.findEntityByNftAddress(nftAddress)
                                 ?: return@withContext NftResponse.AbstractNftErrorMessage(message = "Error: This nft not found in database")
-                            currentNftEntity.nftTonPrice = lastNftResponse.decoded.full_price.toLong() / tonDecimals
+                            currentNftEntity.nftTonPrice = lastNftResponse.decoded.full_price.toLong()
                             nftsDao.save(currentNftEntity)
 
                             return@withContext lastNftResponse

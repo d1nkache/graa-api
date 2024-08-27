@@ -18,7 +18,8 @@ sealed class CollectionResponse {
         val graaVerified: Boolean,
         val floorPrice: Long,
         val collectionMetadata: CollectionMetadataHelperResponse,
-        val nftItems: List<SearchResponse.NftItemResponse>
+        val countOfNftsInCollection: Int,
+        val nftItems: List<NftItemHelperResponse>?
     ): CollectionResponse()
 
     class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
@@ -30,6 +31,14 @@ sealed class CollectionResponse {
         val owner: CollectionOwnerHelperResponse,
         val approved_by: List<String>
     ): CollectionResponse()
+
+
+    class NftItemHelperResponse(
+        val name: String,
+        val description: String,
+        val image: String,
+        val price: Long
+    )
 
     class AbstractCollectionErrorMessage(
         val message: String,

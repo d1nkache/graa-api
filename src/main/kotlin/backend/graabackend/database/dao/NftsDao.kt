@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param
 
 
 interface NftsDao: CommonDao<Nfts> {
-    fun findEntryByNftAddress(nftAddress: String): Nfts?
+    fun findEntityByNftAddress(nftAddress: String): Nfts?
     fun findAllyByNftOwnerAddress(nftOwnerAddress: String): List<Nfts>
     fun deleteAllByNftOwnerAddress(nftOwnerAddress: String)
     fun findAllByCollectionAddress(collectionAddress: String): List<Nfts>
