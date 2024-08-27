@@ -29,7 +29,7 @@ class NftServiceImpl(
     protected val retrofitNftObject: NftControllerTonApiEndpoints by lazy {
         retrofitNftBuilder.buildNftRetrofitObject()
     }
-    val tonDecimals: Long = 10.0.pow(9).toLong()
+//    val tonDecimals: Long = 10.0.pow(9).toLong()
 
     override suspend fun getNft(nftAddress: String): NftResponse {
         try {
@@ -69,7 +69,7 @@ class NftServiceImpl(
     override suspend fun updateNftPrice(nftAddress: String): NftResponse {
         return withContext(Dispatchers.IO) {
             var lastNftResponse: NftResponse.GetNftSmartContractInfoFinalResponse
-            val endTime = System.currentTimeMillis() + 4 * 60 * 1000
+            val endTime = System.currentTimeMillis() + 1.5 * 60 * 1000
             var nftOwnerAddress: String
             val fixedPriceNum = "0x46495850"
 
@@ -97,7 +97,7 @@ class NftServiceImpl(
                     println("Error: ${e.message}")
                 }
 
-                delay(5000L)
+                delay(15000L)
             }
 
             return@withContext NftResponse.AbstractNftErrorMessage("Error: Sale Smart Contract was not deploy successfully")
