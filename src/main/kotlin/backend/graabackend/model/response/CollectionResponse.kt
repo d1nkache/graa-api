@@ -22,6 +22,7 @@ sealed class CollectionResponse {
         val nftItems: List<NftItemHelperResponse>?
     ): CollectionResponse()
 
+    class SortedNftItemsFinalResponse(val nftItems: List<NftItemHelperResponse>?): CollectionResponse()
     class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
     class CollectionOwnerHelperResponse(val address: String): CollectionResponse()
 
@@ -32,13 +33,12 @@ sealed class CollectionResponse {
         val approved_by: List<String>
     ): CollectionResponse()
 
-
     class NftItemHelperResponse(
         val name: String,
         val description: String,
         val image: String,
-        val price: Long
-    )
+        val price: Long?
+    ): CollectionResponse()
 
     class AbstractCollectionErrorMessage(
         val message: String,

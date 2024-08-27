@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional
 
 
 // Надо детализировать ошибки
-
 @Service
 class CollectionServiceImpl(
     private val verifiedCollectionsDao: VerifiedCollectionsDao,
@@ -34,7 +33,6 @@ class CollectionServiceImpl(
         try {
             return withContext(Dispatchers.IO) {
                 val collectionMetadata = retrofitCollectionObject.getCollectionMetadata(collectionAddress)
-
                 val listOfCollectionNfts = retrofitCollectionObject.getAllNftFromCollection(collectionAddress).apply {
                     if (this.nft_items.isEmpty()) {
                         return@withContext CollectionResponse.GetCollectionFinalResponse(
@@ -71,34 +69,41 @@ class CollectionServiceImpl(
                 }
 
                 val paginatedNfts = listOfCollectionNfts.nft_items.subList(startIndex, endIndex)
-
                 val listOfCollectionNftsWithPrice: MutableList<CollectionResponse.NftItemHelperResponse> = mutableListOf()
 
                 for (elem in paginatedNfts) {
                     val currentNftInDatabase = nftsDao.findEntityByNftAddress(elem.address)
-                    val currentNftPrice: Long = currentNftInDatabase?.nftTonPrice ?: -1
-
                     val nftName = elem.metadata.name ?: ""
                     val nftDescription = elem.metadata.description ?: ""
+                    val nftPrice = currentNftInDatabase?.nftTonPrice
 
                     listOfCollectionNftsWithPrice.add(CollectionResponse.NftItemHelperResponse(
                         name = nftName,
                         description = nftDescription,
                         image = elem.metadata.image,
-                        price = currentNftPrice
+                        price = nftPrice
                     ))
                 }
 
-                var floorPrice = listOfCollectionNftsWithPrice[0].price
-//                println(floorPrice)
+                var floorPrice: Long = Long.MAX_VALUE
+
                 for (elem in listOfCollectionNftsWithPrice) {
-                    if (elem.price < floorPrice) {
+                    if (elem.price != null && elem.price.toInt() != -1 && elem.price < floorPrice) {
                         floorPrice = elem.price
                     }
                 }
 
+                if (floorPrice == Long.MAX_VALUE) {
+                    floorPrice = -1
+                }
+
+                val verifiedCollection = verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress = collectionAddress)?.collectionAddress
+
                 return@withContext CollectionResponse.GetCollectionFinalResponse(
-                    graaVerified = true,
+                    graaVerified =  when {
+                        collectionAddress == verifiedCollection -> true
+                        else -> false
+                    },
                     floorPrice = floorPrice,
                     collectionMetadata = CollectionResponse.CollectionMetadataHelperResponse(
                         address = collectionAddress,
@@ -111,22 +116,65 @@ class CollectionServiceImpl(
                 )
             }
         } catch (e: Exception) {
-            return CollectionResponse.AbstractCollectionErrorMessage(message = e.localizedMessage ?: "Unknown error")
+            return CollectionResponse.AbstractCollectionErrorMessage(message = e.message ?: "Unknown error")
         }
     }
 
-//    override suspend fun sortCollectionByPrice(ascending: Boolean, collectionAddress: String): CollectionResponse = callCollectionMethod(
-//        firstArg = collectionAddress,
-//        secondArg = ascending,
-//        thirdArg = null,
-//        callErrorMessage = "Nft collection not found for the given address",
-//        funcErrorMessage = "Error: There is some problems in callCollectionFunc",
-//        endpoint1 = { address -> retrofitCollectionObject.getAllNftFromCollection(address) },
-//        verifiedCollectionsDao = verifiedCollectionsDao,
-//        nftDao = nftsDao,
-//        pageNumber = -1,
-//        pageSize = 0
-//    )
+    override suspend fun sortCollectionByPrice(ascending: Boolean, collectionAddress: String, pageNumber: Int, pageSize: Int): CollectionResponse {
+        try {
+            return withContext(Dispatchers.IO) {
+                val listOfCollectionNfts = retrofitCollectionObject.getAllNftFromCollection(collectionAddress).apply {
+                    if (this.nft_items.isEmpty()) {
+                        return@withContext CollectionResponse.SortedNftItemsFinalResponse(
+                            nftItems = null
+                        )
+                    }
+                }
+
+                val startIndex = pageNumber * pageSize
+                val endIndex = (startIndex + pageSize).coerceAtMost(listOfCollectionNfts.nft_items.size)
+
+                if (startIndex >= listOfCollectionNfts.nft_items.size) {
+                    return@withContext CollectionResponse.SortedNftItemsFinalResponse(
+                        nftItems = null
+                    )
+                }
+
+                val paginatedNfts = listOfCollectionNfts.nft_items.subList(startIndex, endIndex)
+                val listOfCollectionNftsWithPrice: MutableList<CollectionResponse.NftItemHelperResponse> = mutableListOf()
+
+                for (elem in paginatedNfts) {
+                    val currentNftInDatabase = nftsDao.findEntityByNftAddress(elem.address)
+                    val currentNftPrice: Long = currentNftInDatabase?.nftTonPrice ?: -1
+                    val nftName = elem.metadata.name ?: ""
+                    val nftDescription = elem.metadata.description ?: ""
+
+                    listOfCollectionNftsWithPrice.add(CollectionResponse.NftItemHelperResponse(
+                        name = nftName,
+                        description = nftDescription,
+                        image = elem.metadata.image,
+                        price = currentNftPrice
+                    ))
+                }
+
+                val nftsWithValidPrice = listOfCollectionNftsWithPrice.filter { it.price != -1L }
+                val nftsWithInvalidPrice = listOfCollectionNftsWithPrice.filter { it.price == -1L }
+
+                val sortedNfts = if (ascending) {
+                    nftsWithInvalidPrice + nftsWithValidPrice.sortedBy { it.price }
+                } else {
+                    nftsWithValidPrice.sortedByDescending { it.price } + nftsWithInvalidPrice
+                }
+
+
+                return@withContext CollectionResponse.SortedNftItemsFinalResponse(
+                    nftItems = sortedNfts
+                )
+            }
+        } catch (e: Exception) {
+            return CollectionResponse.AbstractCollectionErrorMessage(message = e.localizedMessage ?: "Unknown error")
+        }
+    }
 
     //ОБРАТИТЬ ВНИМАНИЕ НАДО НА ТО ЧТО АДРЕС МОЖЕТ БЫТЬ РАЗНЫХ ФОРМАТОВ
     @Transactional

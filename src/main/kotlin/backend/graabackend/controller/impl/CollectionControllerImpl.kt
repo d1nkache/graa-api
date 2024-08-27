@@ -35,14 +35,18 @@ class CollectionControllerImpl(
         collectionAddress = collectionAddress
     )
 
-//    @GetMapping("/sort/{ascending}")
-//    @CrossOrigin(origins = ["*"], maxAge = 3600)
-//    override suspend fun sortCollectionByPrice(@PathVariable ascending: Boolean): CollectionResponse = collectionControllerHelper(
-//        firstArg = null,
-//        secondArg = ascending,
-//        errorMessage = "Ascending is uncorrected",
-//        serviceMethod1 = null,
-//        serviceMethod2 = collectionService::sortCollectionByPrice
-//    )
+    @GetMapping("/sort-collection-nfts/{ascending}/{collectionAddress}/page/{pageNumber}/pageSize/{pageSize}")
+    @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
+    override suspend fun sortCollectionByPrice(
+        @PathVariable ascending: Boolean,
+        @PathVariable collectionAddress: String,
+        @PathVariable pageNumber: Int,
+        @PathVariable pageSize: Int
+    ): CollectionResponse = collectionService.sortCollectionByPrice(
+        ascending = ascending,
+        collectionAddress = collectionAddress,
+        pageNumber = pageNumber,
+        pageSize = pageSize
+    )
 }
 

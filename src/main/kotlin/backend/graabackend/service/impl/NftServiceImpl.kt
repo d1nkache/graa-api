@@ -72,6 +72,7 @@ class NftServiceImpl(
             val endTime = System.currentTimeMillis() + 4 * 60 * 1000
             var nftOwnerAddress: String
             val fixedPriceNum = "0x46495850"
+
             while (System.currentTimeMillis() < endTime) {
                 try {
                     nftOwnerAddress = retrofitNftObject.getNft(nftAddress).owner.address
@@ -81,7 +82,9 @@ class NftServiceImpl(
                         if (lastNftResponse.stack[0].num == fixedPriceNum) {
                             val currentNftEntity = nftsDao.findEntityByNftAddress(nftAddress)
                                 ?: return@withContext NftResponse.AbstractNftErrorMessage(message = "Error: This nft not found in database")
-                            currentNftEntity.nftTonPrice = lastNftResponse.decoded.full_price.toLong()
+                            currentNftEntity.nftTonPrice = lastNftResponse.decoded.full_price.toLong().apply {
+                                if (this == 0L) currentNftEntity.nftTonPrice = -1
+                            }
                             nftsDao.save(currentNftEntity)
 
                             return@withContext lastNftResponse
