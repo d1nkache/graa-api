@@ -48,13 +48,23 @@ class NftServiceImpl(
                     }
                     """.trimIndent()
 
-                val nftAttributes = retrofitNftGraphqlObject.executeGraphqlQuery(GraphqlRequest(
-                    query = query,
-                    variables = mapOf("address" to nftAddress)
-                )).data.alphaNftItemByAddress.attributes
+                val nftAttributes = retrofitNftGraphqlObject.executeGraphqlQuery(
+                    GraphqlRequest(
+                        query = query,
+                        variables = mapOf("address" to nftAddress)
+                    )
+                ).data.alphaNftItemByAddress.attributes
 
+                val nftPrice = nftsDao.findEntityByNftAddress(nftAddress)?.nftTonPrice
                 println(nftAttributes.size)
                 return@withContext NftResponse.GetNftFinalResponse(
+                    saleMetadata = NftResponse.SaleMetadataHelperResponse(
+                        onSale = when {
+                            nftPrice != null && nftPrice != -1L -> true
+                            else -> false
+                        },
+                        salePrice = nftPrice
+                    ),
                     collectionMetadata = getCollectionResponse,
                     nftMetadata = getNftResponse,
                     nftAttributes = nftAttributes

@@ -18,10 +18,16 @@ sealed class NftResponse {
     ): NftResponse()
 
     class GetNftFinalResponse(
+        val saleMetadata: SaleMetadataHelperResponse,
         val collectionMetadata: CollectionResponse.CollectionMetadataHelperResponse,
         val nftMetadata: NftMetadataHelperResponse,
         val nftAttributes: List<Attribute>
     ): NftResponse()
+
+    class SaleMetadataHelperResponse(
+        val onSale: Boolean,
+        val salePrice: Long?
+    )
 
     class CollectionAddressHelperResponse(val address: String): NftResponse()
     class DecodedHelperResponse(val full_price: String): NftResponse()
