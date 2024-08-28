@@ -2,6 +2,7 @@ spring:
   application:
     name: graa-backend
   datasource:
+  
     url: "jdbc:postgresql://172.17.0.1:5432/graa_backend"
     username: "observer"
     password: "1111"
@@ -16,3 +17,4 @@ server:
 logging:
   level:
     org.springframework.security: DEBUG
+
