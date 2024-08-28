@@ -27,12 +27,9 @@ class UserServiceImpl(
 
     @Transactional
     override suspend fun addNewUser(walletAddress: String): UserResponse {
-        val userCurrentNfts = withContext(Dispatchers.IO) {
-            nftsDao.findAllyByNftOwnerAddress(walletAddress)
-        }
         val newUserNfts: MutableList<Nfts> = mutableListOf()
-
 //        retrofitUserObject.getUserNfts(walletAddress)?.nft_items?.let { println(it.size) }
+
         retrofitUserObject.getUserNfts(walletAddress)?.nft_items?.forEach { nftItem ->
             val collectionAddress = nftItem.collection?.address ?: ""
             Nfts(
@@ -42,7 +39,7 @@ class UserServiceImpl(
                 collectionAddress = collectionAddress,
                 nftDescription = nftItem.metadata.description,
                 nftImage = nftItem.metadata.image,
-                nftTonPrice = 0
+                nftTonPrice = -1
             ).also { newUserNft ->
                 nftsDao.save(newUserNft)
                 newUserNfts.add(newUserNft)
@@ -87,14 +84,14 @@ class UserServiceImpl(
                     val collectionAddress = elem.collection?.address ?: ""
 
                     withContext(Dispatchers.IO) {
-                        val newNft: Nfts = Nfts(
+                        val newNft = Nfts(
                             nftAddress = elem.address,
                             nftName = elem.metadata.name,
                             nftOwnerAddress = elem.owner.address,
                             collectionAddress = collectionAddress,
                             nftDescription = elem.metadata.description,
                             nftImage = elem.metadata.image,
-                            nftTonPrice = 0
+                            nftTonPrice = -1
                         )
                         nftsDao.save(newNft)
                         newUserNfts.add(newNft)

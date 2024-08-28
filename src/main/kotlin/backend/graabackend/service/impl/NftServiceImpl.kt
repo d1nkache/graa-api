@@ -124,7 +124,7 @@ class NftServiceImpl(
             val dealNft = withContext(Dispatchers.IO) {
                 nftsDao.findEntityByNftAddress(nftAddress = nftAddress)
             }
-            
+
             if (dealNft != null) {
                 dealNft.nftTonPrice = -1
             }
