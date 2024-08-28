@@ -78,6 +78,7 @@ class CollectionServiceImpl(
                     val nftPrice = currentNftInDatabase?.nftTonPrice
 
                     listOfCollectionNftsWithPrice.add(CollectionResponse.NftItemHelperResponse(
+                        address = elem.address,
                         name = nftName,
                         description = nftDescription,
                         image = elem.metadata.image,
@@ -151,6 +152,7 @@ class CollectionServiceImpl(
 
                     listOfCollectionNftsWithPrice.add(CollectionResponse.NftItemHelperResponse(
                         name = nftName,
+                        address = elem.address,
                         description = nftDescription,
                         image = elem.metadata.image,
                         price = currentNftPrice

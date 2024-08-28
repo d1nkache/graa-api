@@ -35,6 +35,7 @@ sealed class CollectionResponse {
 
     class NftItemHelperResponse(
         val name: String,
+        val address: String,
         val description: String,
         val image: String,
         val price: Long?
