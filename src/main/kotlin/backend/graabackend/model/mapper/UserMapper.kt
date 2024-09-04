@@ -1,5 +1,4 @@
 package backend.graabackend.model.mapper
 
-class SearchMapper {
-
+class UserMapper {
 }

@@ -1,9 +1,7 @@
 package backend.graabackend.service.impl
 
-import backend.graabackend.GraaBackendApplication
-import backend.graabackend.database.dao.NftsDao
 import backend.graabackend.database.dao.VerifiedCollectionsDao
-import backend.graabackend.database.entities.VerifiedCollections
+import backend.graabackend.model.mapper.CollectionMapper
 import backend.graabackend.model.response.CollectionResponse
 import backend.graabackend.retrofit.RetrofitConfig
 import backend.graabackend.retrofit.endpoints.CollectionControllerTonApiEndpoints
@@ -15,12 +13,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-
-// Надо детализировать ошибки
 @Service
 class CollectionServiceImpl(
     private val verifiedCollectionsDao: VerifiedCollectionsDao,
-    private val nftsDao: NftsDao
+    private val collectionMapper: CollectionMapper,
 ) : CollectionService {
     @Autowired
     lateinit var retrofitCollectionBuilder: RetrofitConfig
@@ -31,184 +27,113 @@ class CollectionServiceImpl(
 
     override suspend fun getCollection(collectionAddress: String, pageNumber: Int, pageSize: Int): CollectionResponse {
         try {
-            return withContext(Dispatchers.IO) {
-                val collectionMetadata = retrofitCollectionObject.getCollectionMetadata(collectionAddress)
-                val listOfCollectionNfts = retrofitCollectionObject.getAllNftFromCollection(collectionAddress).apply {
-                    if (this.nft_items.isEmpty()) {
-                        return@withContext CollectionResponse.GetCollectionFinalResponse(
-                            graaVerified = true,
-                            floorPrice = -1,
-                            collectionMetadata = CollectionResponse.CollectionMetadataHelperResponse(
-                                address = collectionAddress,
-                                metadata = collectionMetadata.metadata,
-                                owner = collectionMetadata.owner,
-                                approved_by = collectionMetadata.approved_by
-                            ),
-                            countOfNftsInCollection = this.nft_items.size,
-                            nftItems = null
-                        )
-                    }
-                }
-
-                val startIndex = pageNumber * pageSize
-                val endIndex = (startIndex + pageSize).coerceAtMost(listOfCollectionNfts.nft_items.size)
-
-                if (startIndex >= listOfCollectionNfts.nft_items.size) {
-                    return@withContext CollectionResponse.GetCollectionFinalResponse(
-                        graaVerified = true,
-                        floorPrice = -1,
-                        collectionMetadata = CollectionResponse.CollectionMetadataHelperResponse(
-                            address = collectionAddress,
-                            metadata = collectionMetadata.metadata,
-                            owner = collectionMetadata.owner,
-                            approved_by = collectionMetadata.approved_by
-                        ),
-                        countOfNftsInCollection = listOfCollectionNfts.nft_items.size,
-                        nftItems = emptyList()
-                    )
-                }
-
-                val paginatedNfts = listOfCollectionNfts.nft_items.subList(startIndex, endIndex)
-                val listOfCollectionNftsWithPrice: MutableList<CollectionResponse.NftItemHelperResponse> = mutableListOf()
-
-                for (elem in paginatedNfts) {
-                    val currentNftInDatabase = nftsDao.findEntityByNftAddress(elem.address)
-                    val nftName = elem.metadata.name ?: ""
-                    val nftDescription = elem.metadata.description ?: ""
-                    val nftPrice = currentNftInDatabase?.nftTonPrice
-
-                    listOfCollectionNftsWithPrice.add(CollectionResponse.NftItemHelperResponse(
-                        address = elem.address,
-                        name = nftName,
-                        description = nftDescription,
-                        image = elem.metadata.image,
-                        price = nftPrice
-                    ))
-                }
-
-                var floorPrice: Long = Long.MAX_VALUE
-
-                for (elem in listOfCollectionNftsWithPrice) {
-                    if (elem.price != null && elem.price.toInt() != -1 && elem.price < floorPrice) {
-                        floorPrice = elem.price
-                    }
-                }
-
-                if (floorPrice == Long.MAX_VALUE) {
-                    floorPrice = -1
-                }
-
-                val verifiedCollection = verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress = collectionAddress)?.collectionAddress
-
-                return@withContext CollectionResponse.GetCollectionFinalResponse(
-                    graaVerified =  when {
-                        collectionAddress == verifiedCollection -> true
-                        else -> false
-                    },
-                    floorPrice = floorPrice,
-                    collectionMetadata = CollectionResponse.CollectionMetadataHelperResponse(
-                        address = collectionAddress,
-                        metadata = collectionMetadata.metadata,
-                        owner = collectionMetadata.owner,
-                        approved_by = collectionMetadata.approved_by
-                    ),
-                    countOfNftsInCollection = listOfCollectionNfts.nft_items.size,
-                    nftItems = listOfCollectionNftsWithPrice
+            val listOfCollectionNftsWithPrice: MutableList<CollectionResponse.NftItemHelperResponse> = mutableListOf()
+            val collectionMetadata = retrofitCollectionObject.getCollectionMetadata(collectionAddress)
+            val listOfCollectionNfts = retrofitCollectionObject.getAllNftFromCollection(collectionAddress).apply {
+                if (this.nft_items.isEmpty()) return collectionMapper.asEmptyNftGetCollectionFinalResponse(
+                    collectionMetadata = collectionMetadata
                 )
             }
-        } catch (e: Exception) {
-            return CollectionResponse.AbstractCollectionErrorMessage(message = e.message ?: "Unknown error")
+            val startIndex = pageNumber * pageSize
+            val endIndex = (startIndex + pageSize).coerceAtMost(listOfCollectionNfts.nft_items.size)
+            val paginatedNfts = listOfCollectionNfts.nft_items.subList(startIndex, endIndex)
+
+            if (startIndex >= listOfCollectionNfts.nft_items.size) {
+                return CollectionResponse.AbstractCollectionErrorMessage(
+                    message = "Error: problems with pagination: countOfNftsInCollection = ${listOfCollectionNfts.nft_items.size}"
+                )
+            }
+
+            for (elem in paginatedNfts) listOfCollectionNftsWithPrice.add(collectionMapper.asNftItemHelperResponse(nft = elem))
+
+            return collectionMapper.asGetCollectionFinalResponse(
+                collectionMetadata = collectionMetadata,
+                listOfCollectionNfts = listOfCollectionNfts,
+                listOfCollectionNftsWithPrice = listOfCollectionNftsWithPrice
+            )
+        }
+        catch(ex: Exception) {
+            println(ex.message)
+            return CollectionResponse.AbstractCollectionErrorMessage(message="Error: Bad response from TonApi")
         }
     }
 
     override suspend fun sortCollectionByPrice(ascending: Boolean, collectionAddress: String, pageNumber: Int, pageSize: Int): CollectionResponse {
-        try {
-            return withContext(Dispatchers.IO) {
-                val listOfCollectionNfts = retrofitCollectionObject.getAllNftFromCollection(collectionAddress).apply {
-                    if (this.nft_items.isEmpty()) {
-                        return@withContext CollectionResponse.SortedNftItemsFinalResponse(
-                            nftItems = null
+        val getCollectionResponse = this.getCollection(
+            collectionAddress = collectionAddress,
+            pageNumber = pageNumber,
+            pageSize = pageSize
+        )
+
+        // тут бы дублирование кода хорошо было бы убрать
+        when(getCollectionResponse) {
+            is CollectionResponse.AbstractCollectionErrorMessage -> return getCollectionResponse
+            is CollectionResponse.GetCollectionFinalResponse -> {
+                try {
+                    val listOfCollectionNftsWithPrice: MutableList<CollectionResponse.NftItemHelperResponse> = mutableListOf()
+                    val listOfCollectionNfts = retrofitCollectionObject.getAllNftFromCollection(collectionAddress)
+                    val startIndex = pageNumber * pageSize
+                    val endIndex = (startIndex + pageSize).coerceAtMost(listOfCollectionNfts.nft_items.size)
+                    val paginatedNfts = listOfCollectionNfts.nft_items.subList(startIndex, endIndex)
+
+                    for (elem in paginatedNfts) listOfCollectionNftsWithPrice.add(
+                        collectionMapper.asNftItemHelperResponse(
+                            nft = elem
                         )
-                    }
-                }
-
-                val startIndex = pageNumber * pageSize
-                val endIndex = (startIndex + pageSize).coerceAtMost(listOfCollectionNfts.nft_items.size)
-
-                if (startIndex >= listOfCollectionNfts.nft_items.size) {
-                    return@withContext CollectionResponse.SortedNftItemsFinalResponse(
-                        nftItems = null
                     )
+
+                    val nftsWithValidPrice = listOfCollectionNftsWithPrice.filter { it.price != -1L }
+                    val nftsWithInvalidPrice = listOfCollectionNftsWithPrice.filter { it.price == -1L }
+
+
+                    val sortedNfts = if (ascending) {
+                        nftsWithInvalidPrice + nftsWithValidPrice.sortedBy { it.price }
+                    } else {
+                        nftsWithValidPrice.sortedByDescending { it.price } + nftsWithInvalidPrice
+                    }
+                    getCollectionResponse.nftItems = sortedNfts
+
+                    return getCollectionResponse
                 }
-
-                val paginatedNfts = listOfCollectionNfts.nft_items.subList(startIndex, endIndex)
-                val listOfCollectionNftsWithPrice: MutableList<CollectionResponse.NftItemHelperResponse> = mutableListOf()
-
-                for (elem in paginatedNfts) {
-                    val currentNftInDatabase = nftsDao.findEntityByNftAddress(elem.address)
-                    val currentNftPrice: Long = currentNftInDatabase?.nftTonPrice ?: -1
-                    val nftName = elem.metadata.name ?: ""
-                    val nftDescription = elem.metadata.description ?: ""
-
-                    listOfCollectionNftsWithPrice.add(CollectionResponse.NftItemHelperResponse(
-                        name = nftName,
-                        address = elem.address,
-                        description = nftDescription,
-                        image = elem.metadata.image,
-                        price = currentNftPrice
-                    ))
+                catch(ex: Exception) {
+                    println(ex.message)
+                    return CollectionResponse.AbstractCollectionErrorMessage(message="Error: Bad response from TonApi")
                 }
-
-                val nftsWithValidPrice = listOfCollectionNftsWithPrice.filter { it.price != -1L }
-                val nftsWithInvalidPrice = listOfCollectionNftsWithPrice.filter { it.price == -1L }
-
-                val sortedNfts = if (ascending) {
-                    nftsWithInvalidPrice + nftsWithValidPrice.sortedBy { it.price }
-                } else {
-                    nftsWithValidPrice.sortedByDescending { it.price } + nftsWithInvalidPrice
-                }
-
-
-                return@withContext CollectionResponse.SortedNftItemsFinalResponse(
-                    nftItems = sortedNfts
-                )
             }
-        } catch (e: Exception) {
-            return CollectionResponse.AbstractCollectionErrorMessage(message = e.localizedMessage ?: "Unknown error")
+            else -> return CollectionResponse.AbstractCollectionErrorMessage(message = "Error: Something went wrong")
         }
     }
 
-    //ОБРАТИТЬ ВНИМАНИЕ НАДО НА ТО ЧТО АДРЕС МОЖЕТ БЫТЬ РАЗНЫХ ФОРМАТОВ
     @Transactional
     override suspend fun verifiedCollection(collectionAddress: String): CollectionResponse {
-        return withContext(Dispatchers.IO) {
-            val existingCollection = verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress)
+        val existingCollection = withContext(Dispatchers.IO) {
+            verifiedCollectionsDao.findVerifiedCollectionByCollectionAddress(collectionAddress)
+        }
 
-            if (existingCollection != null) {
-                return@withContext CollectionResponse.AbstractCollectionErrorMessage(
-                    message = "This collection is already verified",
-                    status = HttpStatus.OK
-                )
-            } else {
+        if (existingCollection != null) {
+            return CollectionResponse.AbstractCollectionErrorMessage(
+                message = "This collection is already verified",
+                status = HttpStatus.OK
+            )
+        } else {
+            try {
                 val currentCollectionMetadata = retrofitCollectionObject.getCollectionMetadata(collectionAddress)
-                val currentCollectionVerifiedEntity = VerifiedCollections(
-                    collectionName = currentCollectionMetadata.metadata.name,
-                    collectionAddress = collectionAddress,
-                    ownerAddress = currentCollectionMetadata.owner.address
-                )
+                val currentCollectionVerifiedEntity =
+                    collectionMapper.asVerifiedCollectionEntity(currentCollectionMetadata)
 
-                verifiedCollectionsDao.save(currentCollectionVerifiedEntity)
+                withContext(Dispatchers.IO) {
+                    verifiedCollectionsDao.save(currentCollectionVerifiedEntity)
+                }
 
-                return@withContext CollectionResponse.CollectionEntityFinalResponse(
-                    collectionName = currentCollectionVerifiedEntity.collectionName,
-                    collectionAddress = currentCollectionVerifiedEntity.collectionAddress,
-                    ownerAddress = currentCollectionVerifiedEntity.ownerAddress
-                )
+                return collectionMapper.asCollectionEntityFinalResponse(currentCollectionMetadata)
+            }
+            catch(ex: Exception) {
+                println(ex.message)
+                return CollectionResponse.AbstractCollectionErrorMessage(message="Error: Something went wrong")
             }
         }
     }
 
-    // Нормально выводить информацию об успешном удалении
     @Transactional
     override fun deleteCollectionFromVerified(collectionAddress: String): CollectionResponse {
         val rowsDeleted = verifiedCollectionsDao.deleteByCollectionAddress(collectionAddress)

@@ -28,7 +28,6 @@ class UserServiceImpl(
     @Transactional
     override suspend fun addNewUser(walletAddress: String): UserResponse {
         val newUserNfts: MutableList<Nfts> = mutableListOf()
-//        retrofitUserObject.getUserNfts(walletAddress)?.nft_items?.let { println(it.size) }
 
         retrofitUserObject.getUserNfts(walletAddress)?.nft_items?.forEach { nftItem ->
             val collectionAddress = nftItem.collection?.address ?: ""

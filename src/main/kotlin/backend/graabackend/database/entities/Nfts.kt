@@ -9,11 +9,14 @@ class Nfts (
     @Column
     var nftAddress: String,
 
+    @Column
+    var collectionAddress: String,
+
     @Column(nullable = true)
     var nftName: String?,
 
     @Column
-    var nftDescription: String,
+    var nftDescription: String?,
 
     @Column
     var nftImage: String,
@@ -22,8 +25,5 @@ class Nfts (
     var nftOwnerAddress: String,
 
     @Column
-    var nftTonPrice: Long,
-
-    @Column
-    var collectionAddress: String
+    var nftTonPrice: Long
 ): AbstractEntity()

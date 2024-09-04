@@ -19,7 +19,7 @@ class RetrofitConfig {
     val tonApiBaseUrl = "https://tonapi.io"
     val getGemsApiBaseUrl = "https://api.getgems.io"
     val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(AuthInterceptor("your-hardcoded-token"))
+        .addInterceptor(AuthInterceptor())
         .build()
 
     fun buildNftGetGemsRetrofitObject(): NftControllerGraphqlEndpoints = Retrofit.Builder()
@@ -38,7 +38,7 @@ class RetrofitConfig {
 
     fun buildNftRetrofitObject(): NftControllerTonApiEndpoints = Retrofit.Builder()
         .baseUrl(tonApiBaseUrl)
-        .client(okHttpClient)
+//        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(NftControllerTonApiEndpoints::class.java)

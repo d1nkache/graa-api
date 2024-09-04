@@ -6,7 +6,7 @@ import backend.graabackend.model.response.SearchResponse
 interface SearchController {
     suspend fun globalSearchCollection(collectionAddress: String): SearchResponse
     suspend fun globalSearchNft(nftAddress: String): SearchResponse
-    suspend fun globalSearchAccount(domain: String): SearchResponse
+    suspend fun globalSearchAccount(accountId: String): SearchResponse
     suspend fun localSearchNft(accountId: String, searchString: String): SearchResponse
 }
 

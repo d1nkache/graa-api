@@ -1,28 +1,34 @@
 package backend.graabackend.controller.helpers
 
 import backend.graabackend.model.response.SearchResponse
+import backend.graabackend.service.SearchService
 
-suspend fun searchControllerHelper(
-    firstArg: String?,
-    secondArg: String?,
-    thirdArg: String?,
-    errorMessage: String,
-    serviceMethod1: (suspend (String) -> SearchResponse)? = null,
-    serviceMethod2: (suspend (String, String) -> SearchResponse)? = null
-): SearchResponse {
-    if (!firstArg.isNullOrEmpty() && !secondArg.isNullOrEmpty()) if (serviceMethod2 != null) {
-        return serviceMethod2(firstArg, secondArg)
-    }
-    firstArg?.takeIf { it.isNotEmpty() }?.let {
-        if (serviceMethod1 != null) {
-            return serviceMethod1(it)
-        }
-    }
-    secondArg?.takeIf { it.isNotEmpty() }?.let {
-        if (serviceMethod1 != null) {
-            return serviceMethod1(it)
-        }
+import org.springframework.stereotype.Component
+import org.springframework.http.HttpStatus
+
+
+@Component
+class SearchControllerHelper(private val searchService: SearchService) {
+    suspend fun changeAddressFormat(collectionAddress: String): String {
+        return collectionAddress
     }
 
-    return SearchResponse.AbstractSearchErrorMessage(message = errorMessage)
+    suspend fun checkControllerVariablesOnError(itemAddress: String?, accountId: String?, searchString: String?, methodName: String): SearchResponse {
+        if (itemAddress != null){
+            if (itemAddress.length != 48 && itemAddress.length != 66) {
+                return SearchResponse.AbstractSearchErrorMessage(
+                    message = "Error: Invalid collection address length",
+                    HttpStatus.BAD_REQUEST
+                )
+            }
+        }
+
+        return when (methodName) {
+            "globalSearchCollection" -> searchService.globalSearchCollection(collectionAddress = itemAddress!!)
+            "globalSearchNft" -> searchService.globalSearchNft(nftAddress = itemAddress!!)
+            "globalSearchAccount" -> searchService.globalSearchAccount(accountId = accountId!!)
+            "localSearchNft" -> searchService.localSearchNft(accountId = accountId!!, searchString = searchString!!)
+            else -> SearchResponse.AbstractSearchErrorMessage(message = "Error: Unknown method name", HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }

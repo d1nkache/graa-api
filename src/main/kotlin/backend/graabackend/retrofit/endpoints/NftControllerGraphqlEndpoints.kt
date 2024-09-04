@@ -2,8 +2,8 @@ package backend.graabackend.retrofit.endpoints
 
 import backend.graabackend.model.request.GraphqlRequest
 import backend.graabackend.model.response.NftResponse
-import retrofit2.http.Body
 import retrofit2.http.Headers
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface NftControllerGraphqlEndpoints {

@@ -1,52 +1,70 @@
 package backend.graabackend.controller.impl
 
-import backend.graabackend.controller.CollectionController
-import backend.graabackend.controller.helpers.collectionControllerHelper
+import backend.graabackend.controller.helpers.CollectionControllerHelper
 import backend.graabackend.model.response.CollectionResponse
-import backend.graabackend.service.CollectionService
+import backend.graabackend.controller.CollectionController
+
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/collection")
 class CollectionControllerImpl(
-    private val collectionService: CollectionService
-) : CollectionController {
+    private val collectionControllerHelper: CollectionControllerHelper
+): CollectionController {
     @GetMapping("/get/{collectionAddress}/page/{pageNumber}/page-size/{pageSize}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override suspend fun getCollection(@PathVariable collectionAddress: String, @PathVariable pageNumber: Int, @PathVariable pageSize: Int): CollectionResponse = collectionControllerHelper(
-        firstArg = collectionAddress,
-        secondArg = null,
-        pageNumber = pageNumber,
-        pageSize = pageSize,
-        errorMessage = "Collection address is uncorrected",
-        serviceMethod1 = collectionService::getCollection,
-        serviceMethod2 = null
-    )
+    override suspend fun getCollection(@PathVariable collectionAddress: String, @PathVariable pageNumber: Int, @PathVariable pageSize: Int): CollectionResponse {
+        val hexCollectionAddress: String = collectionControllerHelper.changeCollectionAddressFormat(collectionAddress = collectionAddress)
+
+        return collectionControllerHelper.checkControllerVariablesOnError(
+            collectionAddress = hexCollectionAddress,
+            pageNumber = pageNumber,
+            pageSize = pageSize,
+            ascending = null,
+            methodName = "getCollection"
+        )
+    }
 
     @PostMapping("/add-to-verified/{collectionAddress}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override suspend fun verifyCollection(@PathVariable collectionAddress: String): CollectionResponse = collectionService.verifiedCollection(
-        collectionAddress = collectionAddress
-    )
+    override suspend fun verifyCollection(@PathVariable collectionAddress: String): CollectionResponse {
+        val hexCollectionAddress: String = collectionControllerHelper.changeCollectionAddressFormat(collectionAddress = collectionAddress)
 
-    @PostMapping("/delete-from-verified/{collectionAddress}")
+        return collectionControllerHelper.checkControllerVariablesOnError(
+            collectionAddress = hexCollectionAddress,
+            pageNumber = null,
+            pageSize = null,
+            ascending = null,
+            methodName = "verifyCollection"
+        )
+    }
+
+    @DeleteMapping("/delete-from-verified/{collectionAddress}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override fun deleteCollectionFromVerified(@PathVariable collectionAddress: String): CollectionResponse = collectionService.deleteCollectionFromVerified(
-        collectionAddress = collectionAddress
-    )
+    override suspend fun deleteCollectionFromVerified(@PathVariable collectionAddress: String): CollectionResponse {
+        val hexCollectionAddress: String = collectionControllerHelper.changeCollectionAddressFormat(collectionAddress = collectionAddress)
+
+        return collectionControllerHelper.checkControllerVariablesOnError(
+            collectionAddress = hexCollectionAddress,
+            pageNumber = null,
+            pageSize = null,
+            ascending = null,
+            methodName = "deleteCollectionFromVerified"
+        )
+    }
 
     @GetMapping("/sort-collection-nfts/{ascending}/{collectionAddress}/page/{pageNumber}/pageSize/{pageSize}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override suspend fun sortCollectionByPrice(
-        @PathVariable ascending: Boolean,
-        @PathVariable collectionAddress: String,
-        @PathVariable pageNumber: Int,
-        @PathVariable pageSize: Int
-    ): CollectionResponse = collectionService.sortCollectionByPrice(
-        ascending = ascending,
-        collectionAddress = collectionAddress,
-        pageNumber = pageNumber,
-        pageSize = pageSize
-    )
+    override suspend fun sortCollectionByPrice(@PathVariable ascending: Boolean, @PathVariable collectionAddress: String, @PathVariable pageNumber: Int, @PathVariable pageSize: Int): CollectionResponse {
+       val hexCollectionAddress: String = collectionControllerHelper.changeCollectionAddressFormat(collectionAddress = collectionAddress)
+
+        return collectionControllerHelper.checkControllerVariablesOnError(
+            collectionAddress = hexCollectionAddress,
+            pageNumber = pageNumber,
+            pageSize = pageSize,
+            ascending = ascending,
+            methodName = "sortCollectionByPrice"
+        )
+    }
 }
 

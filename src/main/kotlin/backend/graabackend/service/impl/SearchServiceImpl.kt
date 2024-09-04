@@ -41,8 +41,8 @@ class SearchServiceImpl(
         nftsDao= null
     )
 
-    override suspend fun globalSearchAccount(domain: String): SearchResponse = callSearchMethod(
-        arg = listOf(domain),
+    override suspend fun globalSearchAccount(accountId: String): SearchResponse = callSearchMethod(
+        arg = listOf(accountId),
         callErrorMessage = "Account not found for the given address",
         funcErrorMessage = "An error occurred while fetching the Account",
         endpoint1 = null,

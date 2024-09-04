@@ -5,9 +5,4 @@ import backend.graabackend.model.response.UserResponse
 interface UserController {
     suspend fun addNewUser(walletAddress: String ): UserResponse
     suspend fun updateUserInfo(walletAddress: String ): UserResponse
-    fun deleteUser(): Any
-    fun updateUserData(): Any
-    fun getUserInfo(): Any
-    fun getAllUsers(): Any
-    fun getUserById(id: Long): Any
 }

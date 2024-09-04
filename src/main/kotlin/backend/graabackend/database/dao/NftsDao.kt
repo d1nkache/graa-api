@@ -1,8 +1,6 @@
 package backend.graabackend.database.dao
 
 import backend.graabackend.database.entities.Nfts
-import backend.graabackend.model.response.NftResponse
-import backend.graabackend.model.response.SearchResponse
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 

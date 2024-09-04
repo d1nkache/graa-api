@@ -1,9 +1,6 @@
 package backend.graabackend.model.response
 
 import org.springframework.http.HttpStatus
-import org.springframework.security.config.http.SessionCreationPolicy
-import java.time.LocalDateTime
-
 
 // добавить иконку коллекции
 
@@ -19,10 +16,9 @@ sealed class CollectionResponse {
         val floorPrice: Long,
         val collectionMetadata: CollectionMetadataHelperResponse,
         val countOfNftsInCollection: Int,
-        val nftItems: List<NftItemHelperResponse>?
+        var nftItems: List<NftItemHelperResponse>?
     ): CollectionResponse()
 
-    class SortedNftItemsFinalResponse(val nftItems: List<NftItemHelperResponse>?): CollectionResponse()
     class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
     class CollectionOwnerHelperResponse(val address: String): CollectionResponse()
 
@@ -34,9 +30,9 @@ sealed class CollectionResponse {
     ): CollectionResponse()
 
     class NftItemHelperResponse(
-        val name: String,
+        val name: String?,
         val address: String,
-        val description: String,
+        val description: String?,
         val image: String,
         val price: Long?
     ): CollectionResponse()
@@ -46,4 +42,3 @@ sealed class CollectionResponse {
         val status: HttpStatus = HttpStatus.BAD_REQUEST
     ) : CollectionResponse()
 }
-
