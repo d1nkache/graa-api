@@ -11,6 +11,7 @@ sealed class UserResponse{
         val ownerAddress: String,
         val collectionAddress: String
     ): UserResponse()
+    class NewOrUpdatedUserNftsFinalResponse(val newNfts: List<Nfts>): UserResponse()
 
     class NftItemHelperResponse(
         val address: String,
@@ -18,11 +19,8 @@ sealed class UserResponse{
         val owner: OwnerInfoHelperResponse,
         val collection: CollectionMetadataHelperResponse?
     ): UserResponse()
-
-    class NewOrUpdatedUserNftsFinalResponse(val newNfts: List<Nfts>): UserResponse()
-
     class GetUserNftsHelperResponse(val nft_items: List<NftItemHelperResponse>): UserResponse()
-    class NftMetadataHelperResponse(val name: String, val description: String, val image: String): UserResponse()
+    class NftMetadataHelperResponse(val name: String?, val description: String?, val image: String): UserResponse()
     class OwnerInfoHelperResponse(val address: String): UserResponse()
     class CollectionMetadataHelperResponse(val address: String): UserResponse()
     class AbstractUserErrorMessage(val message: String, val status: HttpStatus = HttpStatus.BAD_REQUEST): UserResponse()

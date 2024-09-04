@@ -88,6 +88,7 @@ class NftServiceImpl(
                 try {
                     nftOwnerAddress = retrofitNftObject.getNft(nftAddress).owner.address
                     lastNftResponse = retrofitNftObject.getNftSaleSmartContract(nftOwnerAddress)
+                    println(lastNftResponse.success)
 
                     if (lastNftResponse.success) {
                         if (lastNftResponse.stack[0].num == fixedPriceNum) {

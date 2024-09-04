@@ -6,15 +6,24 @@ import backend.graabackend.service.CollectionService
 import org.springframework.stereotype.Component
 import org.springframework.http.HttpStatus
 
+import java.util.Base64
 
 @Component
 class CollectionControllerHelper(private val collectionService: CollectionService) {
     suspend fun changeCollectionAddressFormat(collectionAddress: String): String {
-        return collectionAddress
+        if (collectionAddress.startsWith("EQ") || collectionAddress.startsWith("UQ")) {
+            val decodedBytes = Base64.getUrlDecoder().decode(collectionAddress).drop(2)
+            val hexString = decodedBytes.joinToString("") { "%02x".format(it) }
+
+            return "0:${hexString.take(64)}"
+        }
+        if (collectionAddress.startsWith("0:")) return collectionAddress
+
+        return "BadStringInput"
     }
 
     suspend fun checkControllerVariablesOnError(collectionAddress: String, pageNumber: Int?, pageSize: Int?, ascending: Boolean?, methodName: String): CollectionResponse {
-        if (collectionAddress.length != 48 && collectionAddress.length != 66) {
+        if (collectionAddress.length != 66) {
             return CollectionResponse.AbstractCollectionErrorMessage(message = "Error: Invalid collection address length", HttpStatus.BAD_REQUEST)
         }
 

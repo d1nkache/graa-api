@@ -5,6 +5,7 @@ import backend.graabackend.service.NftService
 
 import org.springframework.stereotype.Component
 import org.springframework.http.HttpStatus
+import java.util.*
 
 @Component
 class NftControllerHelper(private val nftService: NftService) {
@@ -13,11 +14,22 @@ class NftControllerHelper(private val nftService: NftService) {
     }
 
     suspend fun changeNftAddressFormat(nftAddress: String): String {
-        return nftAddress
+        if (nftAddress.startsWith("EQ") || nftAddress.startsWith("UQ")) {
+            val decodedBytes = Base64.getUrlDecoder().decode(nftAddress).drop(2)
+            val hexString = decodedBytes.joinToString("") { "%02x".format(it) }
+
+            return "0:${hexString.take(64)}"
+        }
+        if (nftAddress.startsWith("0:")) return nftAddress
+
+        return "BadStringInput"
     }
 
     suspend fun checkControllerVariablesOnError(nftAddress: String, transactionHash: String?, methodName: String): NftResponse {
-        if (nftAddress.length != 48 && nftAddress.length != 66) {
+        if (nftAddress.length != 66) {
+            println("0:ac3a9f5580e86cdd977bd9d588d88840643d60c468c793f599cd50f1a93245ff")
+            println(nftAddress)
+            println(nftAddress.length)
             return NftResponse.AbstractNftErrorMessage(message = "Error: Invalid collection address length", HttpStatus.BAD_REQUEST)
         }
 

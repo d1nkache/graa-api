@@ -1,6 +1,7 @@
 package backend.graabackend.database.entities
 
 import backend.graabackend.database.AbstractEntity
+
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 
@@ -10,7 +11,7 @@ class Nfts (
     var nftAddress: String,
 
     @Column
-    var collectionAddress: String,
+    var collectionAddress: String?,
 
     @Column(nullable = true)
     var nftName: String?,

@@ -5,17 +5,26 @@ import backend.graabackend.service.SearchService
 
 import org.springframework.stereotype.Component
 import org.springframework.http.HttpStatus
+import java.util.*
 
 
 @Component
 class SearchControllerHelper(private val searchService: SearchService) {
-    suspend fun changeAddressFormat(collectionAddress: String): String {
-        return collectionAddress
+    suspend fun changeAddressFormat(itemAddress: String): String {
+        if (itemAddress.startsWith("EQ") || itemAddress.startsWith("UQ")) {
+            val decodedBytes = Base64.getUrlDecoder().decode(itemAddress).drop(2)
+            val hexString = decodedBytes.joinToString("") { "%02x".format(it) }
+
+            return "0:${hexString.take(64)}"
+        }
+        if (itemAddress.startsWith("0:")) return itemAddress
+
+        return "BadStringInput"
     }
 
     suspend fun checkControllerVariablesOnError(itemAddress: String?, accountId: String?, searchString: String?, methodName: String): SearchResponse {
-        if (itemAddress != null){
-            if (itemAddress.length != 48 && itemAddress.length != 66) {
+        if (itemAddress != null) {
+            if (itemAddress.length != 66) {
                 return SearchResponse.AbstractSearchErrorMessage(
                     message = "Error: Invalid collection address length",
                     HttpStatus.BAD_REQUEST
