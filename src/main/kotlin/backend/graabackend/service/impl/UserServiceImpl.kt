@@ -28,7 +28,7 @@ class UserServiceImpl(
     private val userMapper: UserMapper
 ) : UserService {
     private val logger: Logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
-    // убрать запрос в другой файл
+    // убрать запрос в другой файл бы
     val query =
         """
                 query NftItemsByOwner(${'$'}ownerAddress: String!, ${'$'}first: Int!) {
