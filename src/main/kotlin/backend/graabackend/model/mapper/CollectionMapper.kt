@@ -90,18 +90,22 @@ class CollectionMapper(
     }
 
     suspend fun asVerifiedCollectionEntity(collectionMetadata: CollectionResponse.CollectionMetadataHelperResponse): VerifiedCollections {
+        val ownerAddress: String = collectionMetadata.owner.address ?: ""
+
         return VerifiedCollections(
             collectionName = collectionMetadata.metadata.name,
             collectionAddress = collectionMetadata.address,
-            ownerAddress = collectionMetadata.owner.address
+            ownerAddress = ownerAddress
         )
     }
 
     suspend fun asCollectionEntityFinalResponse(collectionMetadata: CollectionResponse.CollectionMetadataHelperResponse): CollectionResponse.CollectionEntityFinalResponse {
+        val ownerAddress: String = collectionMetadata.owner.address ?: ""
+
         return CollectionResponse.CollectionEntityFinalResponse(
             collectionName = collectionMetadata.metadata.name,
             collectionAddress = collectionMetadata.address,
-            ownerAddress = collectionMetadata.owner.address
+            ownerAddress = ownerAddress
         )
     }
 }

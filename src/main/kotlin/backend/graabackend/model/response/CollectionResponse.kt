@@ -20,7 +20,7 @@ sealed class CollectionResponse {
     ): CollectionResponse()
 
     class NftItemsHelperResponse(val nft_items: List<SearchResponse.NftItemResponse>): CollectionResponse()
-    class CollectionOwnerHelperResponse(val address: String): CollectionResponse()
+    class CollectionOwnerHelperResponse(val address: String?): CollectionResponse()
 
     class CollectionMetadataHelperResponse(
         val address: String,

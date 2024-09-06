@@ -8,8 +8,13 @@ sealed class SearchResponse() {
         val resultSearchAsNftAddress: MetadataResponse,
         val resultSearchAsNftName:  List<MetadataResponse>
     ): SearchResponse()
+
     class GetListOfSimilarNfts(val similarNfts: List<Nfts>): SearchResponse()
-    class MetadataResponse(val name: String?, val image: String, val description: String?): SearchResponse()
+    class MetadataResponse(
+        val name: String?,
+        val image: String,
+        val description: String?
+    ): SearchResponse()
     class SearchItemResponse(val metadata: MetadataResponse): SearchResponse()
     class SearchAccountResponse(val name: String, val icon: String): SearchResponse()
     class NftItemResponse(val address: String, val metadata: MetadataResponse): SearchResponse()

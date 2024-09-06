@@ -1,8 +1,9 @@
 package backend.graabackend.retrofit.endpoints
 
 import backend.graabackend.model.response.CollectionResponse
-import retrofit2.http.GET
+
 import retrofit2.http.Path
+import retrofit2.http.GET
 
 interface CollectionControllerTonApiEndpoints {
     @GET("/v2/nfts/collections/{accountId}/items")

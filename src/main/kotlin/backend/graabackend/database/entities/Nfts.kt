@@ -10,13 +10,13 @@ class Nfts (
     @Column
     var nftAddress: String,
 
-    @Column
+    @Column(nullable = true)
     var collectionAddress: String?,
 
     @Column(nullable = true)
     var nftName: String?,
 
-    @Column
+    @Column(nullable = true)
     var nftDescription: String?,
 
     @Column

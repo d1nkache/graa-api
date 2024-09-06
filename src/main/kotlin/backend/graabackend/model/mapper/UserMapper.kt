@@ -7,18 +7,19 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserMapper {
-    suspend fun asNftsEntity(nftItem: UserResponse.NftItemHelperResponse): Nfts {
-        val collectionAddress = nftItem.collection?.address ?: ""
-        val nftItemName = nftItem.metadata.name ?: ""
-        val nftDescription = nftItem.metadata.description ?: ""
+    suspend fun asNftsEntity(nftItem: UserResponse.ItemDataHelperResponse, walletAddress: String): Nfts {
+        val collectionAddress = nftItem.collection.address ?: ""
+        val nftItemName = nftItem.name ?: ""
+        val nftDescription = nftItem.description ?: ""
+        val image = nftItem.content.image?.baseUrl ?: ""
 
         return Nfts(
             nftAddress = nftItem.address,
             nftName = nftItemName,
-            nftOwnerAddress = nftItem.owner.address,
+            nftOwnerAddress = walletAddress,
             collectionAddress = collectionAddress,
             nftDescription = nftDescription,
-            nftImage = nftItem.metadata.image,
+            nftImage = image,
             nftTonPrice = -1
         )
     }

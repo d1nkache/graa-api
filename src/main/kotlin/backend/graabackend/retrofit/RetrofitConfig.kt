@@ -18,34 +18,24 @@ class RetrofitConfig {
 //    val baseUrl = dotenv["TON_API_BASE_URL"]
     val tonApiBaseUrl = "https://tonapi.io"
     val getGemsApiBaseUrl = "https://api.getgems.io"
-    val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(AuthInterceptor())
-        .build()
+//    val okHttpClient = OkHttpClient.Builder()
+//        .addInterceptor(AuthInterceptor())
+//        .build()
 
     fun buildNftGetGemsRetrofitObject(): NftControllerGraphqlEndpoints = Retrofit.Builder()
         .baseUrl(getGemsApiBaseUrl)
-//        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(NftControllerGraphqlEndpoints::class.java)
 
-    fun buildUserRetrofitObject(): UserControllerTonApiEndpoints = Retrofit.Builder()
-        .baseUrl(tonApiBaseUrl)
-    //  .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(UserControllerTonApiEndpoints::class.java)
-
     fun buildNftRetrofitObject(): NftControllerTonApiEndpoints = Retrofit.Builder()
         .baseUrl(tonApiBaseUrl)
-//        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(NftControllerTonApiEndpoints::class.java)
 
     fun buildCollectionRetrofitObject(): CollectionControllerTonApiEndpoints = Retrofit.Builder()
         .baseUrl(tonApiBaseUrl)
-    //  .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(CollectionControllerTonApiEndpoints::class.java)
@@ -53,8 +43,19 @@ class RetrofitConfig {
 
     fun buildSearchRetrofitObject(): SearchControllerTonApiEndpoints = Retrofit.Builder()
         .baseUrl(tonApiBaseUrl)
-    //  .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(SearchControllerTonApiEndpoints::class.java)
+
+    fun buildUserRetrofitObject(): UserControllerTonApiEndpoints = Retrofit.Builder()
+        .baseUrl(tonApiBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(UserControllerTonApiEndpoints::class.java)
+
+    fun buildUserGetGemsRetrofitObject(): UserControllerGraphqlEndpoints = Retrofit.Builder()
+        .baseUrl(getGemsApiBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(UserControllerGraphqlEndpoints::class.java)
 }

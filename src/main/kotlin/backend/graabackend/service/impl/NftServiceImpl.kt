@@ -1,7 +1,7 @@
 package backend.graabackend.service.impl
 
-
 import backend.graabackend.database.dao.NftsDao
+import backend.graabackend.model.mapper.NftMapper
 import backend.graabackend.model.request.GraphqlRequest
 import backend.graabackend.model.response.NftResponse
 import backend.graabackend.retrofit.RetrofitConfig
@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class NftServiceImpl(
-    private val nftsDao: NftsDao
+    private val nftsDao: NftsDao,
+    private val nftMapper: NftMapper
 ): NftService {
     @Autowired
     lateinit var retrofitNftBuilder: RetrofitConfig
@@ -34,85 +35,88 @@ class NftServiceImpl(
 
     override suspend fun getNft(nftAddress: String): NftResponse {
         try {
-            return withContext(Dispatchers.IO) {
-                val getNftResponse = retrofitNftObject.getNft(nftAddress)
-                val getCollectionResponse = retrofitNftObject.getCollectionMetadata(getNftResponse.collection.address)
-                val query =
-                    """
-                    query AlphaNftItemByAddress(${'$'}address: String!) {
-                      alphaNftItemByAddress(address: ${'$'}address) {
-                        attributes {
-                          traitType
-                          value
-                        }
-                      }
-                    }
-                    """.trimIndent()
-
-                val nftAttributes = retrofitNftGraphqlObject.executeGraphqlQuery(
-                    GraphqlRequest(
-                        query = query,
-                        variables = mapOf("address" to nftAddress)
-                    )
-                ).data.alphaNftItemByAddress.attributes
-
-                val nftPrice = nftsDao.findEntityByNftAddress(nftAddress)?.nftTonPrice
-                println(nftAttributes.size)
-                return@withContext NftResponse.GetNftFinalResponse(
-                    saleMetadata = NftResponse.SaleMetadataHelperResponse(
-                        onSale = when {
-                            nftPrice != null && nftPrice != -1L -> true
-                            else -> false
-                        },
-                        salePrice = nftPrice
-                    ),
-                    collectionMetadata = getCollectionResponse,
-                    nftMetadata = getNftResponse,
-                    nftAttributes = nftAttributes
+            val nftPrice = withContext(Dispatchers.IO) {
+                nftsDao.findEntityByNftAddress(nftAddress)
+            }?.nftTonPrice
+            val query =
+                """
+                   query AlphaNftItemByAddress(${'$'}address: String!) {
+                     alphaNftItemByAddress(address: ${'$'}address) {
+                       attributes {
+                         traitType
+                         value
+                       }
+                     }
+                   }
+                """.trimIndent()
+            val getNftResponse = retrofitNftObject.getNft(nftAddress)
+            val getCollectionResponse = retrofitNftObject.getCollectionMetadata(getNftResponse.collection.address)
+            val nftAttributes = retrofitNftGraphqlObject.executeGraphqlQuery(
+                GraphqlRequest(
+                    query = query,
+                    variables = mapOf("address" to nftAddress)
                 )
-            }
+            ).data.alphaNftItemByAddress.attributes
+
+            return NftResponse.GetNftFinalResponse(
+                saleMetadata = nftMapper.asSaleMetadataHelperResponse(nftPrice),
+                collectionMetadata = getCollectionResponse,
+                nftMetadata = getNftResponse,
+                nftAttributes = nftAttributes
+            )
         }
-        catch (e: Exception) {
-            return NftResponse.AbstractNftErrorMessage(message = "$e")
+        catch (ex: Exception) {
+            println(ex.message)
+            return NftResponse.AbstractNftErrorMessage(
+                message = "Error in NftService: $ex",
+                status = HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 
     override suspend fun updateNftPrice(nftAddress: String): NftResponse {
-        return withContext(Dispatchers.IO) {
+        try {
             var lastNftResponse: NftResponse.GetNftSmartContractInfoFinalResponse
             val endTime = System.currentTimeMillis() + 1.5 * 60 * 1000
-            var nftOwnerAddress: String
             val fixedPriceNum = "0x46495850"
+            var nftOwnerAddress: String
 
             while (System.currentTimeMillis() < endTime) {
-                try {
-                    nftOwnerAddress = retrofitNftObject.getNft(nftAddress).owner.address
-                    lastNftResponse = retrofitNftObject.getNftSaleSmartContract(nftOwnerAddress)
-                    println(lastNftResponse.success)
+                nftOwnerAddress = retrofitNftObject.getNft(nftAddress).owner.address
+                lastNftResponse = retrofitNftObject.getNftSaleSmartContract(nftOwnerAddress)
 
-                    if (lastNftResponse.success) {
-                        if (lastNftResponse.stack[0].num == fixedPriceNum) {
-                            val currentNftEntity = nftsDao.findEntityByNftAddress(nftAddress)
-                                ?: return@withContext NftResponse.AbstractNftErrorMessage(message = "Error: This nft not found in database")
-                            currentNftEntity.nftTonPrice = lastNftResponse.decoded.full_price.toLong().apply {
-                                if (this == 0L) currentNftEntity.nftTonPrice = -1
-                            }
+                if (lastNftResponse.success) {
+                    val stackItem = lastNftResponse.stack.firstOrNull()
+
+                    if (stackItem?.num == fixedPriceNum) {
+                        val currentNftEntity = withContext(Dispatchers.IO) {
+                            nftsDao.findEntityByNftAddress(nftAddress)
+                        }
+                            ?: return NftResponse.AbstractNftErrorMessage(message = "Error: This NFT not found in the database")
+
+                        val fullPrice = lastNftResponse.decoded.full_price.toLong()
+                        currentNftEntity.nftTonPrice = if (fullPrice == 0L) -1 else fullPrice
+
+                        withContext(Dispatchers.IO) {
                             nftsDao.save(currentNftEntity)
+                        }
 
-                            return@withContext lastNftResponse
-                        }
-                        else {
-                            return@withContext NftResponse.AbstractNftErrorMessage(message = "This nft is up for auction")
-                        }
+                        return lastNftResponse
+                    } else {
+                        return NftResponse.AbstractNftErrorMessage(message = "This NFT is up for auction")
                     }
-                } catch (e: Exception) {
-                    println("Error: ${e.message}")
                 }
-
-                delay(15000L)
             }
+            delay(15000L)
 
-            return@withContext NftResponse.AbstractNftErrorMessage("Error: Sale Smart Contract was not deploy successfully")
+            return NftResponse.AbstractNftErrorMessage(message = "This nft is up for auction")
+        }
+        catch(ex: Exception) {
+            println(ex.message)
+            return NftResponse.AbstractNftErrorMessage(
+                message = "Error in NftService: $ex",
+                status = HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 

@@ -56,7 +56,10 @@ class CollectionServiceImpl(
         }
         catch(ex: Exception) {
             println(ex.message)
-            return CollectionResponse.AbstractCollectionErrorMessage(message="Error: Bad response from TonApi")
+            return CollectionResponse.AbstractCollectionErrorMessage(
+                message = "Error in CollectionController: $ex",
+                status = HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 
@@ -99,7 +102,10 @@ class CollectionServiceImpl(
                 }
                 catch(ex: Exception) {
                     println(ex.message)
-                    return CollectionResponse.AbstractCollectionErrorMessage(message="Error: Bad response from TonApi")
+                    return CollectionResponse.AbstractCollectionErrorMessage(
+                        message = "Error in CollectionController: $ex",
+                        status = HttpStatus.INTERNAL_SERVER_ERROR
+                    )
                 }
             }
             else -> return CollectionResponse.AbstractCollectionErrorMessage(message = "Error: Something went wrong")
@@ -131,7 +137,10 @@ class CollectionServiceImpl(
             }
             catch(ex: Exception) {
                 println(ex.message)
-                return CollectionResponse.AbstractCollectionErrorMessage(message="Error: Something went wrong")
+                return CollectionResponse.AbstractCollectionErrorMessage(
+                    message = "Error in CollectionController: $ex",
+                    status = HttpStatus.INTERNAL_SERVER_ERROR
+                )
             }
         }
     }

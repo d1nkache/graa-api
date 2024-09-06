@@ -1,6 +1,7 @@
 package backend.graabackend.retrofit.endpoints
 
 import backend.graabackend.model.response.UserResponse
+
 import retrofit2.http.GET
 import retrofit2.http.Path
 
