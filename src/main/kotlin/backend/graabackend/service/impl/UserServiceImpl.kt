@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.stereotype.Service
 import org.springframework.http.HttpStatus
-x
+
 @Service
 class UserServiceImpl(
     private val nftsDao: NftsDao,
