@@ -46,7 +46,7 @@ class UserServiceImpl(
                             baseUrl
                           }
                         }
-                      }x
+                      }
                     }
                   }
                 }
