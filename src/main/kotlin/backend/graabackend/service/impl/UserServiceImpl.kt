@@ -19,11 +19,15 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.stereotype.Service
 import org.springframework.http.HttpStatus
 
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
+
 @Service
 class UserServiceImpl(
     private val nftsDao: NftsDao,
     private val userMapper: UserMapper
 ) : UserService {
+    private val logger: Logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
     // убрать запрос в другой файл
     val query =
         """
@@ -87,7 +91,7 @@ class UserServiceImpl(
             return UserResponse.NewOrUpdatedUserNftsFinalResponse(newNfts = newUserNfts)
         }
         catch(ex: Exception) {
-            println(ex.message)
+            logger.error(ex.message)
             return UserResponse.AbstractUserErrorMessage(
                 message = "Error: Something went wrong",
                 status = HttpStatus.INTERNAL_SERVER_ERROR
