@@ -1,4 +1,3 @@
-
 Stack:
 - Spring Boot
 - Spring Security
