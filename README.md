@@ -4,6 +4,7 @@ Stack:
 - Spring Data JPA
 - Retrofit
 - GraphQl
+- Ton-Kotlin
 - Postgres
 
 
