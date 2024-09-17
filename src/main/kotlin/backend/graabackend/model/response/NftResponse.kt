@@ -29,7 +29,7 @@ sealed class NftResponse {
         val salePrice: Long?
     )
 
-    class CollectionAddressHelperResponse(val address: String): NftResponse()
+    class CollectionAddressHelperResponse(var address: String): NftResponse()
     class DecodedHelperResponse(val full_price: String): NftResponse()
 
     class NftMetadataHelperResponse(
@@ -39,7 +39,7 @@ sealed class NftResponse {
     ): NftResponse()
 
     class NftOwnerHelperResponse(
-        val address: String
+        var address: String
     )
     class AbstractNftErrorMessage(
         val message: String,

@@ -8,6 +8,7 @@ import backend.graabackend.model.response.SearchResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
+import org.ton.block.AddrStd
 
 @Component
 class CollectionMapper(
@@ -69,6 +70,8 @@ class CollectionMapper(
         var floorPrice: Long = Long.MAX_VALUE
 
         for (elem in listOfCollectionNftsWithPrice) {
+            elem.address = AddrStd.toString(address = AddrStd(elem.address))
+
             if (elem.price != null && elem.price != -1L && elem.price < floorPrice) {
                 floorPrice = elem.price
             }
@@ -79,7 +82,7 @@ class CollectionMapper(
             graaVerified =  graaVerified,
             floorPrice = floorPrice,
             collectionMetadata = CollectionResponse.CollectionMetadataHelperResponse(
-                address = collectionMetadata.address,
+                address = AddrStd.toString(address = AddrStd(collectionMetadata.address)),
                 metadata = collectionMetadata.metadata,
                 owner = collectionMetadata.owner,
                 approved_by = collectionMetadata.approved_by

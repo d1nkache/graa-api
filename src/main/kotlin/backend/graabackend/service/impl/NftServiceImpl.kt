@@ -1,21 +1,27 @@
 package backend.graabackend.service.impl
 
-import backend.graabackend.database.dao.NftsDao
-import backend.graabackend.model.mapper.NftMapper
-import backend.graabackend.model.request.GraphqlRequest
-import backend.graabackend.model.response.NftResponse
-import backend.graabackend.retrofit.RetrofitConfig
 import backend.graabackend.retrofit.endpoints.NftControllerGraphqlEndpoints
 import backend.graabackend.retrofit.endpoints.NftControllerTonApiEndpoints
-import backend.graabackend.service.NftService
+import backend.graabackend.model.request.GraphqlRequest
 import backend.graabackend.service.helpers.extractBits
+import backend.graabackend.model.response.NftResponse
+import backend.graabackend.retrofit.RetrofitConfig
+import backend.graabackend.model.mapper.NftMapper
+import backend.graabackend.database.dao.NftsDao
+import backend.graabackend.service.NftService
+
+
 import ch.qos.logback.core.encoder.ByteArrayUtil.hexStringToByteArray
+
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.http.HttpStatus
+
+import org.ton.block.AddrStd
 
 @Service
 class NftServiceImpl(
@@ -50,6 +56,9 @@ class NftServiceImpl(
                    }
                 """.trimIndent()
             val getNftResponse = retrofitNftObject.getNft(nftAddress)
+            getNftResponse.collection.address = AddrStd.toString(address = AddrStd(getNftResponse.collection.address))
+            getNftResponse.owner.address = AddrStd.toString(address = AddrStd(getNftResponse.owner.address), bounceable = false)
+
             val getCollectionResponse = retrofitNftObject.getCollectionMetadata(getNftResponse.collection.address)
             val nftAttributes = retrofitNftGraphqlObject.executeGraphqlQuery(
                 GraphqlRequest(

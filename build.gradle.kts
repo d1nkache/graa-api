@@ -54,29 +54,26 @@ dependencies {
 	implementation("io.springfox:springfox-boot-starter:3.0.0")// swagger
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
+	//ton-kotlin
+	implementation("org.ton:ton-kotlin-block-tlb:0.3.1")
 	//graphql-client
 	implementation("com.expediagroup:graphql-kotlin-spring-client:6.0.0")
-
 	//База Данных
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-	runtimeOnly("org.postgresql:postgresql")
-
 	//Безопасность
 	implementation("org.springframework.boot:spring-boot-starter-security")
-
 	//Логирование
 	implementation("org.slf4j:slf4j-api:2.0.7")  // SLF4J API
 	implementation("ch.qos.logback:logback-classic:1.4.12")  // Logback
-
 	//Преобразования шестнадцатеричной строки в байтовый массив
 	implementation("commons-codec:commons-codec:1.15")
+
+	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 
 kotlin {

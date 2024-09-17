@@ -70,7 +70,6 @@ class CollectionServiceImpl(
             pageSize = pageSize
         )
 
-        // тут бы дублирование кода хорошо было бы убрать
         when(getCollectionResponse) {
             is CollectionResponse.AbstractCollectionErrorMessage -> return getCollectionResponse
             is CollectionResponse.GetCollectionFinalResponse -> {

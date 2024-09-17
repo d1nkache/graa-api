@@ -23,7 +23,7 @@ sealed class CollectionResponse {
     class CollectionOwnerHelperResponse(val address: String?): CollectionResponse()
 
     class CollectionMetadataHelperResponse(
-        val address: String,
+        var address: String,
         val metadata: SearchResponse.MetadataResponse,
         val owner: CollectionOwnerHelperResponse,
         val approved_by: List<String>
@@ -31,7 +31,7 @@ sealed class CollectionResponse {
 
     class NftItemHelperResponse(
         val name: String?,
-        val address: String,
+        var address: String,
         val description: String?,
         val image: String,
         val price: Long?

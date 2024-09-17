@@ -35,7 +35,7 @@ class NftControllerImpl(
     }
 
 
-    @PostMapping("/sell-nft/{nftAddress}/{transactionHash}")
+    @PostMapping("/sell-nft/{nftAddress}/{boc}")
     override suspend fun sellNft(@PathVariable nftAddress: String, @PathVariable boc: String): NftResponse {
         val hexNftAddress: String = nftControllerHelper.changeNftAddressFormat(nftAddress = nftAddress)
         val transactionHash: String = nftControllerHelper.convertBocToTransactionHash(boc = boc)
