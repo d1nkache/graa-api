@@ -1,13 +1,16 @@
 package backend.graabackend.model.mapper
 
-import backend.graabackend.database.dao.NftsDao
-import backend.graabackend.database.dao.VerifiedCollectionsDao
 import backend.graabackend.database.entities.VerifiedCollections
+import backend.graabackend.database.dao.VerifiedCollectionsDao
 import backend.graabackend.model.response.CollectionResponse
 import backend.graabackend.model.response.SearchResponse
+import backend.graabackend.database.dao.NftsDao
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
 import org.springframework.stereotype.Component
+
 import org.ton.block.AddrStd
 
 @Component
@@ -42,6 +45,7 @@ class CollectionMapper(
         val currentNftInDatabase = withContext(Dispatchers.IO) {
             nftsDao.findEntityByNftAddress(nft.address)
         }
+        nft.address = AddrStd.toString(AddrStd(address = nft.address))
         val currentNftPrice: Long = currentNftInDatabase?.nftTonPrice ?: -1L
         val nftName = nft.metadata.name ?: ""
         val nftDescription = nft.metadata.description ?: ""
