@@ -87,9 +87,10 @@ class CollectionMapper(
                 address = AddrStd(
                     address = collectionMetadata.owner.address!!
                 ),
-                bounceable = false
+//                bounceable = false
             )
         }
+
 
         return CollectionResponse.GetCollectionFinalResponse(
             graaVerified =  graaVerified,
