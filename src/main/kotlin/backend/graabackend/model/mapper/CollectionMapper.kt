@@ -82,6 +82,15 @@ class CollectionMapper(
         }
         if (floorPrice == Long.MAX_VALUE) floorPrice = -1
 
+        if (collectionMetadata.owner.address != null) {
+            collectionMetadata.owner.address = AddrStd.toString(
+                address = AddrStd(
+                    address = collectionMetadata.owner.address!!
+                ),
+                bounceable = false
+            )
+        }
+
         return CollectionResponse.GetCollectionFinalResponse(
             graaVerified =  graaVerified,
             floorPrice = floorPrice,
