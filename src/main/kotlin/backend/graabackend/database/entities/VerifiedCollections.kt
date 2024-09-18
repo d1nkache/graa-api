@@ -1,6 +1,7 @@
 package backend.graabackend.database.entities
 
 import backend.graabackend.database.AbstractEntity
+
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 
