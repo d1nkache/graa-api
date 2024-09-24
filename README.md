@@ -7,7 +7,7 @@ Stack:
 - GraphQl 
 - Ton-api
 - Ton-Kotlin
-- Postgres
+- PostgreSQL
 
 
 
