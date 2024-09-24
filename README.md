@@ -5,6 +5,7 @@ Stack:
 - Hibernate 
 - Retrofit
 - GraphQl
+- TON-API
 - Ton-Kotlin
 - Postgres
 
