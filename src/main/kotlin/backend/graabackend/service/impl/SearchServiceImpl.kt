@@ -88,6 +88,7 @@ class SearchServiceImpl(
                     for (elem in helperResultSearchAsNftName.similarNfts) {
                         resultSearchAsNftName.add(searchMapper.asMetadataResponseFromNftEntity(elem))
                     }
+
                     return SearchResponse.LocalSearchFinalResponse(
                         resultSearchAsNftAddress = resultSearchAsNftAddress,
                         resultSearchAsNftName = resultSearchAsNftName

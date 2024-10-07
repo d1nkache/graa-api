@@ -37,7 +37,6 @@ class NftServiceImpl(
     protected val retrofitNftObject: NftControllerTonApiEndpoints by lazy {
         retrofitNftBuilder.buildNftRetrofitObject()
     }
-//    val tonDecimals: Long = 10.0.pow(9).toLong()
 
     override suspend fun getNft(nftAddress: String): NftResponse {
         try {
@@ -56,14 +55,20 @@ class NftServiceImpl(
                    }
                 """.trimIndent()
             val getNftResponse = retrofitNftObject.getNft(nftAddress)
+            print(getNftResponse)
             getNftResponse.collection.address = AddrStd.toString(address = AddrStd(getNftResponse.collection.address))
             getNftResponse.owner.address = AddrStd.toString(address = AddrStd(getNftResponse.owner.address), bounceable = false)
 
+            val userFriendlyNftAddress = AddrStd.toString(
+                address = AddrStd(
+                    address = nftAddress
+                )
+            )
             val getCollectionResponse = retrofitNftObject.getCollectionMetadata(getNftResponse.collection.address)
             val nftAttributes = retrofitNftGraphqlObject.executeGraphqlQuery(
                 GraphqlRequest(
                     query = query,
-                    variables = mapOf("address" to nftAddress)
+                    variables = mapOf("address" to userFriendlyNftAddress)
                 )
             ).data.alphaNftItemByAddress.attributes
 
