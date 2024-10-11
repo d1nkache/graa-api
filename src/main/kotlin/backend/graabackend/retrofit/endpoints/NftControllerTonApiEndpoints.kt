@@ -15,4 +15,7 @@ interface NftControllerTonApiEndpoints {
 
     @GET("/v2/blockchain/accounts/{accountId}/methods/get_sale_data")
     suspend fun getNftSaleSmartContract(@Path("accountId") accountId: String): NftResponse.GetNftSmartContractInfoFinalResponse
+
+    @GET("/v2/accounts/{accountId}")
+    suspend fun getAccountIcon(@Path("accountId") accountId: String): NftResponse.NftOwnerIconHelperResponse
 }

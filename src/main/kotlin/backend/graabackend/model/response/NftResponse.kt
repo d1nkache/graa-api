@@ -26,7 +26,8 @@ sealed class NftResponse {
 
     class SaleMetadataHelperResponse(
         val onSale: Boolean,
-        val salePrice: Long?
+        val saleDuckCoinPrice: Long?,
+        val saleUsdtPrice: Long?
     )
 
     class CollectionAddressHelperResponse(var address: String): NftResponse()
@@ -39,8 +40,14 @@ sealed class NftResponse {
     ): NftResponse()
 
     class NftOwnerHelperResponse(
-        var address: String
+        var address: String,
+        var icon: String?
     )
+
+    class NftOwnerIconHelperResponse(
+        val icon: String
+    )
+
     class AbstractNftErrorMessage(
         val message: String,
         val status: HttpStatus = HttpStatus.BAD_REQUEST
@@ -62,4 +69,5 @@ sealed class NftResponse {
         val traitType: String,
         val value: String
     ): NftResponse()
+
 }

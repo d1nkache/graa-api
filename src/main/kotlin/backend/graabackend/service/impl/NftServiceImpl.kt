@@ -71,6 +71,9 @@ class NftServiceImpl(
                     variables = mapOf("address" to userFriendlyNftAddress)
                 )
             ).data.alphaNftItemByAddress.attributes
+            val getAccountResponse = retrofitNftObject.getAccountIcon(getNftResponse.owner.address)
+
+            getNftResponse.owner.icon = getAccountResponse.icon
 
             return NftResponse.GetNftFinalResponse(
                 saleMetadata = nftMapper.asSaleMetadataHelperResponse(nftPrice),
