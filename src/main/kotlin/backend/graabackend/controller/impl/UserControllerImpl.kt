@@ -26,7 +26,7 @@ class UserControllerImpl(private val userControllerHelper: UserControllerHelper)
         val hexWalletAddress: String = userControllerHelper.changeWalletAddressFormat(walletAddress = walletAddress)
 
         return userControllerHelper.checkControllerVariablesOnError(
-            walletAddress = walletAddress,
+            walletAddress = hexWalletAddress,
             methodName = "updateUserInfo"
         )
     }

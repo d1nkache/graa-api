@@ -40,6 +40,7 @@ class NftServiceImpl(
 
     override suspend fun getNft(nftAddress: String): NftResponse {
         try {
+            println(nftAddress)
             val nftPrice = withContext(Dispatchers.IO) {
                 nftsDao.findEntityByNftAddress(nftAddress)
             }?.nftTonPrice
@@ -74,6 +75,8 @@ class NftServiceImpl(
             val getAccountResponse = retrofitNftObject.getAccountIcon(getNftResponse.owner.address)
 
             getNftResponse.owner.icon = getAccountResponse.icon
+            println(nftPrice)
+            println(getAccountResponse.icon)
 
             return NftResponse.GetNftFinalResponse(
                 saleMetadata = nftMapper.asSaleMetadataHelperResponse(nftPrice),

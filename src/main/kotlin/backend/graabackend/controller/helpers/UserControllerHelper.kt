@@ -23,6 +23,7 @@ class UserControllerHelper(private val userService: UserService) {
     }
 
     suspend fun checkControllerVariablesOnError(walletAddress: String, methodName: String): UserResponse {
+
         if (walletAddress.length != 66) {
             return UserResponse.AbstractUserErrorMessage(message = "Error: Invalid wallet address length", HttpStatus.BAD_REQUEST)
         }
