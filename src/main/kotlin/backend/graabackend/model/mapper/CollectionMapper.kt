@@ -1,6 +1,6 @@
 package backend.graabackend.model.mapper
 
-import backend.graabackend.controller.helpers.CollectionControllerHelper
+import backend.graabackend.controller.helpers.NftControllerHelper
 import backend.graabackend.database.entities.VerifiedCollections
 import backend.graabackend.database.dao.VerifiedCollectionsDao
 import backend.graabackend.model.response.CollectionResponse
@@ -17,7 +17,7 @@ import org.ton.block.AddrStd
 @Component
 class CollectionMapper(
     private val verifiedCollectionsDao: VerifiedCollectionsDao,
-    private val collectionHelper: CollectionControllerHelper,
+    private val nftHelper: NftControllerHelper,
     private val nftsDao: NftsDao
 ) {
     suspend fun asEmptyNftGetCollectionFinalResponse(collectionMetadata: CollectionResponse.CollectionMetadataHelperResponse): CollectionResponse.GetCollectionFinalResponse {
@@ -118,12 +118,12 @@ class CollectionMapper(
     }
 
     suspend fun asCollectionEntityFinalResponse(collectionMetadata: CollectionResponse.CollectionMetadataHelperResponse): CollectionResponse.CollectionEntityFinalResponse {
-        val ownerAddress: String = collectionHelper.changeCollectionAddressFormat(collectionMetadata.owner.address ?: "")
-        val collectionAddress = collectionHelper.changeCollectionAddressFormat(collectionMetadata.address)
+        val ownerAddress: String = nftHelper.changeNftAddressFormat(collectionMetadata.owner.address ?: "")
+        val collectionAddress = nftHelper.changeNftAddressFormat(collectionMetadata.address)
 
         return CollectionResponse.CollectionEntityFinalResponse(
             collectionName = collectionMetadata.metadata.name,
-            collectionAddress = collectionMetadata.address,
+            collectionAddress = collectionAddress,
             ownerAddress = ownerAddress
         )
     }
