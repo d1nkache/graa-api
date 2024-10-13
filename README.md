@@ -1,4 +1,4 @@
-Stack:
+## Stack:
 - Spring Boot
 - Spring Security
 - Spring Data JPA
@@ -8,6 +8,5 @@ Stack:
 - Ton-api
 - Ton-Kotlin
 - PostgreSQL
-
-
+## 
 
