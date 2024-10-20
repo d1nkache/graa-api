@@ -14,6 +14,7 @@ import backend.graabackend.retrofit.endpoints.FillDatabaseTonApiEndpoints
 import backend.graabackend.retrofit.RetrofitConfig
 
 import backend.graabackend.service.FillDatabaseService
+import com.sun.org.slf4j.internal.LoggerFactory
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -24,7 +25,10 @@ class FillDatabaseServiceImpl(
     private val nftControllerHelper: NftControllerHelper,
     private val collectionDao: GlobalSearchCollectionsDao,
     private val collectionControllerHelper: CollectionControllerHelper,
-): FillDatabaseService {
+) : FillDatabaseService {
+
+    private val logger = LoggerFactory.getLogger(FillDatabaseServiceImpl::class.java)
+
     @Autowired
     lateinit var retrofitFillDatabaseBuilder: RetrofitConfig
     protected val retrofitFillDatabaseObject: FillDatabaseTonApiEndpoints by lazy {
@@ -40,7 +44,7 @@ class FillDatabaseServiceImpl(
                     val currentObject = this.execute().body()
 
                     counter += 1
-                    println("[CURRENT ITER] --> [$counter/${addresses.size}]")
+                    logger.debug("[CURRENT ITER] --> [$counter/${addresses.size}]")
                     val collectionName = currentObject?.metadata?.name ?: ""
                     val collectionDescription = currentObject?.metadata?.description ?: ""
                     val collectionAddress = currentObject?.address ?: ""
@@ -60,8 +64,8 @@ class FillDatabaseServiceImpl(
             return FillDatabaseResponse(
                 answer = "Added $counter NFTs in database",
             )
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
+            logger.error("Error while adding collections in database: ${ex.message}", ex)
             return FillDatabaseResponse(
                 answer = "Error: ${ex.message}",
             )
@@ -75,7 +79,7 @@ class FillDatabaseServiceImpl(
         try {
             for (address in addresses) {
                 collectionCounter += 1
-                println("[CURRENT COLLECTION ITER] --> [$collectionCounter/${addresses.size}]")
+                logger.debug("[CURRENT COLLECTION ITER] --> [$collectionCounter/${addresses.size}]")
                 val collectionNfts =
                     retrofitFillDatabaseObject.getAllNftFromCollection(accountId = address).execute().body()?.nft_items
 
@@ -90,7 +94,7 @@ class FillDatabaseServiceImpl(
                             val nftOwner = currentObject?.owner?.address ?: ""
                             val nftImage = currentObject?.metadata?.image ?: ""
                             nftCounter += 1
-                            println("[CURRENT NFT ITER] --> [$nftCounter/${collectionNfts.size}] --> [ADDRESS] --> [${nft.address}]")
+                            logger.debug("[CURRENT NFT ITER] --> [$nftCounter/${collectionNfts.size}] --> [ADDRESS] --> [${nft.address}]")
 
                             nftDao.save(
                                 GlobalSearchNfts(
@@ -105,7 +109,7 @@ class FillDatabaseServiceImpl(
                                     nftImage = nftImage,
                                     nftCollection = address,
 
-                                )
+                                    )
                             )
                         }
                     }
@@ -116,8 +120,8 @@ class FillDatabaseServiceImpl(
             return FillDatabaseResponse(
                 answer = "NFTs have been added in database success",
             )
-        }
-        catch(ex: Exception) {
+        } catch (ex: Exception) {
+            logger.error("Error while adding NFTs in database: ${ex.message}", ex)
             return FillDatabaseResponse(
                 answer = "Error: ${ex.message}",
             )

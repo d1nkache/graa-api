@@ -67,6 +67,7 @@ dependencies {
 	//Логирование
 	implementation("org.slf4j:slf4j-api:2.0.7")  // SLF4J API
 	implementation("ch.qos.logback:logback-classic:1.4.12")  // Logback
+
 	//Преобразования шестнадцатеричной строки в байтовый массив
 	implementation("commons-codec:commons-codec:1.15")
 
