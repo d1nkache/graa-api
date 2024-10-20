@@ -19,7 +19,7 @@ class UserMapper(
 
         return Nfts(
             nftAddress = nftHelper.changeNftAddressFormat(nftItem.address),
-            nftName = nftItemName,
+            nftName = nftItemName.lowercase(),
             nftOwnerAddress = walletAddress,
             collectionAddress = collectionAddress,
             nftDescription = nftDescription,

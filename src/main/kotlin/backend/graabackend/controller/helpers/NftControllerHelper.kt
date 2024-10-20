@@ -13,7 +13,7 @@ class NftControllerHelper(private val nftService: NftService) {
         TODO("Not Implemented Yet")
     }
 
-    suspend fun changeNftAddressFormat(nftAddress: String): String {
+    fun changeNftAddressFormat(nftAddress: String): String {
         if (nftAddress.startsWith("EQ") || nftAddress.startsWith("UQ")) {
             val decodedBytes = Base64.getUrlDecoder().decode(nftAddress).drop(2)
             val hexString = decodedBytes.joinToString("") { "%02x".format(it) }

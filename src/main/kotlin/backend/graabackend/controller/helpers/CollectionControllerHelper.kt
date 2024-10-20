@@ -10,7 +10,7 @@ import java.util.Base64
 
 @Component
 class CollectionControllerHelper(private val collectionService: CollectionService) {
-    suspend fun changeCollectionAddressFormat(collectionAddress: String): String {
+    fun changeCollectionAddressFormat(collectionAddress: String): String {
         if (collectionAddress.startsWith("EQ") || collectionAddress.startsWith("UQ")) {
             val decodedBytes = Base64.getUrlDecoder().decode(collectionAddress).drop(2)
             val hexString = decodedBytes.joinToString("") { "%02x".format(it) }

@@ -1,5 +1,7 @@
 package backend.graabackend.model.mapper
 
+import backend.graabackend.database.entities.GlobalSearchCollections
+import backend.graabackend.database.entities.GlobalSearchNfts
 import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.database.entities.Nfts
 import org.springframework.stereotype.Component
@@ -30,11 +32,36 @@ class SearchMapper {
         )
     }
 
+    suspend fun asMetadataResponseFromGlobalSearchCollections(collection: GlobalSearchCollections) : SearchResponse.MetadataResponse {
+        return SearchResponse.MetadataResponse(
+            name = collection.collectionName,
+            image = collection.collectionImage,
+            description = collection.collectionDescription
+        )
+    }
+
+    suspend fun asMetadataResponseFromGlobalSearchNfts(nft: GlobalSearchNfts, collectionAddress: String? = null) : SearchResponse.MetadataResponse {
+        if (collectionAddress != null) {
+            if (nft.nftCollection == collectionAddress) {
+                return SearchResponse.MetadataResponse(
+                    name = nft.nftName,
+                    image =nft.nftImage,
+                    description = nft.nftDescription
+                )
+            }
+        }
+
+        return SearchResponse.MetadataResponse(
+            name = "",
+            image = "",
+            description = ""
+        )
+    }
+
     suspend fun asSearchAccountResponse(accountMetadata: SearchResponse.SearchAccountResponse) : SearchResponse.SearchAccountResponse {
         return SearchResponse.SearchAccountResponse(
             name = accountMetadata.name,
             icon = accountMetadata.icon
         )
     }
-
 }

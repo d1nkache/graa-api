@@ -1,15 +1,21 @@
 package backend.graabackend.model.response
 
+import backend.graabackend.database.entities.GlobalSearchCollections
+import backend.graabackend.database.entities.GlobalSearchNfts
 import backend.graabackend.database.entities.Nfts
 import org.springframework.http.HttpStatus
 
 sealed class SearchResponse() {
-    class LocalSearchFinalResponse(
+    class SearchFinalResponse(
         val resultSearchAsNftAddress: MetadataResponse,
         val resultSearchAsNftName:  List<MetadataResponse>
     ): SearchResponse()
 
-    class GetListOfSimilarNfts(val similarNfts: List<Nfts>): SearchResponse()
+    class GetListOfSimilarNftsHelperResponse(val similarNfts: List<Nfts>): SearchResponse()
+    class GetListOfSimilarGlobalNftsNftsHelperResponse(val similarNfts: List<GlobalSearchNfts>): SearchResponse()
+    class GetListOfSimilarGlobalCollectionsHelperResponse(val similarCollections: List<GlobalSearchCollections>): SearchResponse()
+
+    class GetListOfSimilar
     class MetadataResponse(
         val name: String?,
         val image: String,

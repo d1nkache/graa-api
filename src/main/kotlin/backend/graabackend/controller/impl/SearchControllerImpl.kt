@@ -3,6 +3,7 @@ package backend.graabackend.controller.impl
 import backend.graabackend.controller.helpers.SearchControllerHelper
 import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.controller.SearchController
+import org.springframework.data.jpa.repository.Query
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -10,28 +11,27 @@ import org.springframework.web.bind.annotation.*
 class SearchControllerImpl(
     private val searchControllerHelper: SearchControllerHelper
 ) : SearchController {
-    @GetMapping("/collection/{collectionAddress}")
+    @GetMapping("/collection/{searchString}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override suspend fun globalSearchCollection(@PathVariable collectionAddress: String): SearchResponse {
-        val hexCollectionAddress = searchControllerHelper.changeAddressFormat(collectionAddress)
+    override suspend fun globalSearchCollection(@PathVariable searchString: String): SearchResponse {
 
         return searchControllerHelper.checkControllerVariablesOnError(
-            itemAddress = hexCollectionAddress,
+            itemAddress = null,
             accountId = null,
-            searchString = null,
+            searchString = searchString,
             methodName = "globalSearchCollection"
         )
     }
 
-    @GetMapping("/nft/{nftAddress}")
+    @GetMapping("/nft/{searchString}")
     @CrossOrigin(origins = ["http://localhost:5173"], maxAge = 3600)
-    override suspend fun globalSearchNft(@PathVariable nftAddress: String): SearchResponse {
-        val hexNftAddress = searchControllerHelper.changeAddressFormat(nftAddress)
+    override suspend fun globalSearchNft(@RequestParam collectionAddress: String?, @PathVariable searchString: String): SearchResponse {
+        val hexCollectionAddress = collectionAddress?.let { searchControllerHelper.changeAddressFormat(it) }
 
         return searchControllerHelper.checkControllerVariablesOnError(
-            itemAddress = hexNftAddress,
+            itemAddress = collectionAddress,
             accountId = null,
-            searchString = null,
+            searchString = searchString,
             methodName = "globalSearchNft"
         )
     }
