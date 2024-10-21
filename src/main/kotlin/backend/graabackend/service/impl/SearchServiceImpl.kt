@@ -1,17 +1,20 @@
 package backend.graabackend.service.impl
 
-import backend.graabackend.retrofit.endpoints.SearchControllerTonApiEndpoints
-
 import backend.graabackend.controller.helpers.NftControllerHelper
 
 import backend.graabackend.database.dao.GlobalSearchCollectionsDao
-import backend.graabackend.database.entities.GlobalSearchNfts
 import backend.graabackend.database.dao.GlobalSearchNftsDao
 import backend.graabackend.database.dao.NftsDao
 
+import backend.graabackend.database.entities.GlobalSearchCollections
+import backend.graabackend.database.entities.GlobalSearchNfts
+
 import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.model.mapper.SearchMapper
+
+import backend.graabackend.retrofit.endpoints.SearchControllerTonApiEndpoints
 import backend.graabackend.retrofit.RetrofitConfig
+
 import backend.graabackend.service.SearchService
 
 import kotlinx.coroutines.Dispatchers
@@ -39,34 +42,16 @@ class SearchServiceImpl(
 
     override suspend fun globalSearchCollection(searchString: String): SearchResponse {
         try {
-            var resultSearchAsCollectionAddress = searchMapper.asEmptyMetadataResponse()
-            val resultSearchAsCollectionName: MutableList<SearchResponse.MetadataResponse> = mutableListOf()
-
-            withContext(Dispatchers.IO) {
-                globalSearchCollectionsDao.findByCollectionAddress(searchString)
-            }.apply {
-                for (elem in this) {
-                    if (elem.collectionAddress == searchString) {
-                        resultSearchAsCollectionAddress =
-                            searchMapper.asMetadataResponseFromGlobalSearchCollections(elem)
-                        break
-                    }
-                }
-            }
-
-            val helperResultSearchAsCollectionName = SearchResponse.GetListOfSimilarGlobalCollectionsHelperResponse(
-                similarCollections = withContext(Dispatchers.IO) {
-                    globalSearchCollectionsDao.findByNameContaining(searchString.lowercase())
-                }
-            )
-
-            for (elem in helperResultSearchAsCollectionName.similarCollections) {
-                resultSearchAsCollectionName.add(searchMapper.asMetadataResponseFromGlobalSearchCollections(elem))
+            val searchAsCollectionAddress = retrofitSearchObject.getNftCollection(searchString)
+            val searchAsCollectionName: List<GlobalSearchCollections> = withContext(Dispatchers.IO) {
+                globalSearchCollectionsDao.findByNameContaining(name = searchString)
             }
 
             return SearchResponse.SearchFinalResponse(
-                resultSearchAsNftAddress = resultSearchAsCollectionAddress,
-                resultSearchAsNftName = resultSearchAsCollectionName
+                resultSearchAsAddress = searchMapper.asMetadataResponse(itemMetadata = searchAsCollectionAddress),
+                resultSearchAsName = searchMapper.asMetadataResponseFromGlobalSearchCollections(
+                    collections = searchAsCollectionName,
+                )
             )
         }
         catch(ex: Exception) {
@@ -77,48 +62,17 @@ class SearchServiceImpl(
 
     override suspend fun globalSearchNft(collectionAddress: String?, searchString: String): SearchResponse {
         try {
-            var collectionNfts: List<GlobalSearchNfts> = emptyList()
-
-            if (collectionAddress != null) withContext(Dispatchers.IO) {
-                collectionNfts = globalSearchNftsDao.findByNftCollection(nftCollection = nftControllerHelper.changeNftAddressFormat(collectionAddress))
-            }
-
-            var resultSearchAsNftAddress = searchMapper.asEmptyMetadataResponse()
-            val resultSearchAsNftName: MutableList<SearchResponse.MetadataResponse> = mutableListOf()
-            val asAddress = nftControllerHelper.changeNftAddressFormat(searchString)
-
-            for (elem in collectionNfts) {
-                if (elem.nftAddress == asAddress) {
-                    resultSearchAsNftAddress =
-                        searchMapper.asMetadataResponseFromGlobalSearchNfts(
-                            nft = elem,
-                            collectionAddress = collectionAddress
-                        )
-
-                    break
-                }
-            }
-
-            val helperResultSearchAsNftName =
-                SearchResponse.GetListOfSimilarGlobalNftsNftsHelperResponse(
-                    similarNfts = withContext(Dispatchers.IO) {
-                        globalSearchNftsDao.findByNameContaining(name = searchString.lowercase())
-                    }
-                )
-
-            for (elem in helperResultSearchAsNftName.similarNfts) {
-                val newElem = searchMapper.asMetadataResponseFromGlobalSearchNfts(
-                    nft = elem,
-                    collectionAddress = collectionAddress
-                )
-
-                if (newElem.image == "" && newElem.name == "" && newElem.description == "") continue
-                else resultSearchAsNftName.add(newElem)
+            val searchAsNftAddress = retrofitSearchObject.getNft(searchString)
+            val searchAsNftName: List<GlobalSearchNfts> = withContext(Dispatchers.IO) {
+                    globalSearchNftsDao.findByNameContaining(name = searchString)
             }
 
             return SearchResponse.SearchFinalResponse(
-                resultSearchAsNftAddress = resultSearchAsNftAddress,
-                resultSearchAsNftName = resultSearchAsNftName
+                resultSearchAsAddress = searchMapper.asMetadataResponse(itemMetadata = searchAsNftAddress),
+                resultSearchAsName = searchMapper.asMetadataResponseFromGlobalSearchNfts(
+                    nfts = searchAsNftName,
+                    collectionAddress = collectionAddress
+                )
             )
         }
         catch(ex: Exception) {
@@ -148,8 +102,8 @@ class SearchServiceImpl(
 
                 if (this.isEmpty()) {
                     return SearchResponse.SearchFinalResponse(
-                        resultSearchAsNftAddress = resultSearchAsNftAddress,
-                        resultSearchAsNftName = resultSearchAsNftName
+                        resultSearchAsAddress = resultSearchAsNftAddress,
+                        resultSearchAsName = resultSearchAsNftName
                     )
                 } else {
                     for (elem in this) {
@@ -168,8 +122,8 @@ class SearchServiceImpl(
                     }
 
                     return SearchResponse.SearchFinalResponse(
-                        resultSearchAsNftAddress = resultSearchAsNftAddress,
-                        resultSearchAsNftName = resultSearchAsNftName
+                        resultSearchAsAddress = resultSearchAsNftAddress,
+                        resultSearchAsName = resultSearchAsNftName
                     )
                 }
             }

@@ -10,52 +10,76 @@ import org.springframework.stereotype.Component
 class SearchMapper {
     suspend fun asMetadataResponse(itemMetadata: SearchResponse.SearchItemResponse) : SearchResponse.MetadataResponse {
         return SearchResponse.MetadataResponse(
+            address = itemMetadata.metadata.address,
             name = itemMetadata.metadata.name,
             image = itemMetadata.metadata.image,
-            description = itemMetadata.metadata.description
+            description = itemMetadata.metadata.description,
         )
     }
 
     suspend fun asMetadataResponseFromNftEntity(nft: Nfts) : SearchResponse.MetadataResponse {
         return SearchResponse.MetadataResponse(
+            address = nft.nftAddress,
             name = nft.nftName,
             image = nft.nftImage,
-            description = nft.nftDescription
+            description = nft.nftDescription,
         )
     }
 
     suspend fun asEmptyMetadataResponse() : SearchResponse.MetadataResponse {
         return SearchResponse.MetadataResponse(
+            address = "",
             name = "",
             image = "",
             description = ""
         )
     }
 
-    suspend fun asMetadataResponseFromGlobalSearchCollections(collection: GlobalSearchCollections) : SearchResponse.MetadataResponse {
-        return SearchResponse.MetadataResponse(
-            name = collection.collectionName,
-            image = collection.collectionImage,
-            description = collection.collectionDescription
-        )
-    }
+    suspend fun asMetadataResponseFromGlobalSearchCollections(collections: List<GlobalSearchCollections>) : List<SearchResponse.MetadataResponse> {
+        val resultSearch: MutableList<SearchResponse.MetadataResponse> = mutableListOf()
 
-    suspend fun asMetadataResponseFromGlobalSearchNfts(nft: GlobalSearchNfts, collectionAddress: String? = null) : SearchResponse.MetadataResponse {
-        if (collectionAddress != null) {
-            if (nft.nftCollection == collectionAddress) {
-                return SearchResponse.MetadataResponse(
-                    name = nft.nftName,
-                    image =nft.nftImage,
-                    description = nft.nftDescription
+        for (collection in collections) {
+            resultSearch.add(
+                SearchResponse.MetadataResponse(
+                    address = collection.collectionAddress,
+                    name = collection.collectionName,
+                    image = collection.collectionImage,
+                    description = collection.collectionDescription
                 )
-            }
+            )
         }
 
-        return SearchResponse.MetadataResponse(
-            name = "",
-            image = "",
-            description = ""
-        )
+        return resultSearch
+    }
+
+    suspend fun asMetadataResponseFromGlobalSearchNfts(nfts: List<GlobalSearchNfts>, collectionAddress: String? = null) : List<SearchResponse.MetadataResponse> {
+        val resultSearch: MutableList<SearchResponse.MetadataResponse> = mutableListOf()
+
+        for (nft in nfts) {
+            if (collectionAddress != null) {
+                if (nft.nftCollection == collectionAddress) {
+                    resultSearch.add(
+                        SearchResponse.MetadataResponse(
+                            address = nft.nftAddress,
+                            name = nft.nftName,
+                            image = nft.nftImage,
+                            description = nft.nftDescription
+                        )
+                    )
+                }
+            }
+
+            resultSearch.add(
+                SearchResponse.MetadataResponse(
+                    address = nft.nftAddress,
+                    name = nft.nftName,
+                    image = nft.nftImage,
+                    description = nft.nftDescription
+                )
+            )
+        }
+
+        return resultSearch
     }
 
     suspend fun asSearchAccountResponse(accountMetadata: SearchResponse.SearchAccountResponse) : SearchResponse.SearchAccountResponse {

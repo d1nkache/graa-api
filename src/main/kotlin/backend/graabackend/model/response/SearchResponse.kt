@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus
 
 sealed class SearchResponse() {
     class SearchFinalResponse(
-        val resultSearchAsNftAddress: MetadataResponse,
-        val resultSearchAsNftName:  List<MetadataResponse>
+        val resultSearchAsAddress: MetadataResponse,
+        val resultSearchAsName:  List<MetadataResponse>
     ): SearchResponse()
 
     class GetListOfSimilarNftsHelperResponse(val similarNfts: List<Nfts>): SearchResponse()
@@ -17,6 +17,7 @@ sealed class SearchResponse() {
 
     class GetListOfSimilar
     class MetadataResponse(
+        val address: String,
         val name: String?,
         val image: String,
         val description: String?
