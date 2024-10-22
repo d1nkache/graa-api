@@ -17,7 +17,6 @@ class SearchControllerImpl(
 
         return searchControllerHelper.checkControllerVariablesOnError(
             itemAddress = null,
-            accountId = null,
             searchString = searchString,
             methodName = "globalSearchCollection"
         )
@@ -29,8 +28,7 @@ class SearchControllerImpl(
         val hexCollectionAddress = collectionAddress?.let { searchControllerHelper.changeAddressFormat(it) }
 
         return searchControllerHelper.checkControllerVariablesOnError(
-            itemAddress = collectionAddress,
-            accountId = null,
+            itemAddress = hexCollectionAddress,
             searchString = searchString,
             methodName = "globalSearchNft"
         )
@@ -42,8 +40,7 @@ class SearchControllerImpl(
         val hexAccountId = searchControllerHelper.changeAddressFormat(accountId)
 
         return searchControllerHelper.checkControllerVariablesOnError(
-            itemAddress = null,
-            accountId = hexAccountId,
+            itemAddress = hexAccountId,
             searchString = null,
             methodName = "globalSearchAccount"
         )
@@ -55,8 +52,7 @@ class SearchControllerImpl(
         val hexAccountId = searchControllerHelper.changeAddressFormat(accountId)
 
         return searchControllerHelper.checkControllerVariablesOnError(
-            itemAddress = null,
-            accountId = hexAccountId,
+            itemAddress = hexAccountId,
             searchString = searchString,
             methodName = "localSearchNft"
         )

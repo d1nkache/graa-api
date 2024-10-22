@@ -22,7 +22,7 @@ class SearchControllerHelper(private val searchService: SearchService) {
         return "BadStringInput"
     }
 
-    suspend fun checkControllerVariablesOnError(itemAddress: String?, accountId: String?, searchString: String?, methodName: String): SearchResponse {
+    suspend fun checkControllerVariablesOnError(itemAddress: String?, searchString: String?, methodName: String): SearchResponse {
         if (itemAddress != null) {
             if (itemAddress.length != 66) {
                 return SearchResponse.AbstractSearchErrorMessage(
@@ -34,9 +34,9 @@ class SearchControllerHelper(private val searchService: SearchService) {
 
         return when (methodName) {
             "globalSearchCollection" -> searchService.globalSearchCollection(searchString = searchString!!)
-            "globalSearchNft" -> searchService.globalSearchNft(collectionAddress = itemAddress!!, searchString = searchString!!)
-            "globalSearchAccount" -> searchService.globalSearchAccount(accountId = accountId!!)
-            "localSearchNft" -> searchService.localSearchNft(accountId = accountId!!, searchString = searchString!!)
+            "globalSearchNft" -> searchService.globalSearchNft(collectionAddress = itemAddress, searchString = searchString!!)
+            "globalSearchAccount" -> searchService.globalSearchAccount(accountId = itemAddress!!)
+            "localSearchNft" -> searchService.localSearchNft(accountId = itemAddress!!, searchString = searchString!!)
             else -> SearchResponse.AbstractSearchErrorMessage(message = "Error: Unknown method name", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

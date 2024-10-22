@@ -2,15 +2,21 @@ package backend.graabackend.model.mapper
 
 import backend.graabackend.database.entities.GlobalSearchCollections
 import backend.graabackend.database.entities.GlobalSearchNfts
-import backend.graabackend.model.response.SearchResponse
 import backend.graabackend.database.entities.Nfts
+
+import backend.graabackend.model.response.SearchResponse
+
 import org.springframework.stereotype.Component
+
+import org.ton.block.AddrStd
 
 @Component
 class SearchMapper {
     suspend fun asMetadataResponse(itemMetadata: SearchResponse.SearchItemResponse) : SearchResponse.MetadataResponse {
+        if (itemMetadata.address == "") return this.asEmptyMetadataResponse()
+
         return SearchResponse.MetadataResponse(
-            address = itemMetadata.metadata.address,
+            address = AddrStd(address = itemMetadata.address).toString(userFriendly = true),
             name = itemMetadata.metadata.name,
             image = itemMetadata.metadata.image,
             description = itemMetadata.metadata.description,
@@ -19,7 +25,7 @@ class SearchMapper {
 
     suspend fun asMetadataResponseFromNftEntity(nft: Nfts) : SearchResponse.MetadataResponse {
         return SearchResponse.MetadataResponse(
-            address = nft.nftAddress,
+            address = AddrStd(address = nft.nftAddress).toString(userFriendly = true),
             name = nft.nftName,
             image = nft.nftImage,
             description = nft.nftDescription,
@@ -41,7 +47,7 @@ class SearchMapper {
         for (collection in collections) {
             resultSearch.add(
                 SearchResponse.MetadataResponse(
-                    address = collection.collectionAddress,
+                    address = AddrStd(address = collection.collectionAddress).toString(userFriendly = true),
                     name = collection.collectionName,
                     image = collection.collectionImage,
                     description = collection.collectionDescription
@@ -60,7 +66,7 @@ class SearchMapper {
                 if (nft.nftCollection == collectionAddress) {
                     resultSearch.add(
                         SearchResponse.MetadataResponse(
-                            address = nft.nftAddress,
+                            address = AddrStd(address = nft.nftAddress).toString(userFriendly = true),
                             name = nft.nftName,
                             image = nft.nftImage,
                             description = nft.nftDescription
@@ -71,7 +77,7 @@ class SearchMapper {
 
             resultSearch.add(
                 SearchResponse.MetadataResponse(
-                    address = nft.nftAddress,
+                    address = AddrStd(address = nft.nftAddress).toString(userFriendly = true),
                     name = nft.nftName,
                     image = nft.nftImage,
                     description = nft.nftDescription

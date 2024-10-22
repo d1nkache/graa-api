@@ -1,7 +1,5 @@
 package backend.graabackend.service.impl
 
-import backend.graabackend.controller.helpers.NftControllerHelper
-
 import backend.graabackend.database.dao.GlobalSearchCollectionsDao
 import backend.graabackend.database.dao.GlobalSearchNftsDao
 import backend.graabackend.database.dao.NftsDao
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Service
 class SearchServiceImpl(
     private val nftsDao: NftsDao,
     private val searchMapper : SearchMapper,
-    private val nftControllerHelper: NftControllerHelper,
     private val globalSearchNftsDao: GlobalSearchNftsDao,
     private val globalSearchCollectionsDao: GlobalSearchCollectionsDao
 ) : SearchService {
@@ -41,17 +38,23 @@ class SearchServiceImpl(
     }
 
     override suspend fun globalSearchCollection(searchString: String): SearchResponse {
+        val searchAsCollectionAddress = try {
+            retrofitSearchObject.getNft(searchString)
+        } catch (ex: Exception) {
+            SearchResponse.SearchItemResponse(
+                address = "",
+                metadata = searchMapper.asEmptyMetadataResponse()
+            )
+        }
+
         try {
-            val searchAsCollectionAddress = retrofitSearchObject.getNftCollection(searchString)
             val searchAsCollectionName: List<GlobalSearchCollections> = withContext(Dispatchers.IO) {
                 globalSearchCollectionsDao.findByNameContaining(name = searchString)
             }
 
             return SearchResponse.SearchFinalResponse(
                 resultSearchAsAddress = searchMapper.asMetadataResponse(itemMetadata = searchAsCollectionAddress),
-                resultSearchAsName = searchMapper.asMetadataResponseFromGlobalSearchCollections(
-                    collections = searchAsCollectionName,
-                )
+                resultSearchAsName = searchMapper.asMetadataResponseFromGlobalSearchCollections(collections = searchAsCollectionName)
             )
         }
         catch(ex: Exception) {
@@ -61,8 +64,16 @@ class SearchServiceImpl(
     }
 
     override suspend fun globalSearchNft(collectionAddress: String?, searchString: String): SearchResponse {
+        val searchAsNftAddress = try {
+            retrofitSearchObject.getNft(searchString)
+        } catch (ex: Exception) {
+            SearchResponse.SearchItemResponse(
+                address = "",
+                metadata = searchMapper.asEmptyMetadataResponse()
+            )
+        }
+
         try {
-            val searchAsNftAddress = retrofitSearchObject.getNft(searchString)
             val searchAsNftName: List<GlobalSearchNfts> = withContext(Dispatchers.IO) {
                     globalSearchNftsDao.findByNameContaining(name = searchString)
             }
@@ -84,6 +95,7 @@ class SearchServiceImpl(
     override suspend fun globalSearchAccount(accountId: String): SearchResponse {
         try {
             val account = retrofitSearchObject.getAccount(accountId)
+
             return searchMapper.asSearchAccountResponse(accountMetadata = account)
         }
         catch(ex: Exception) {
