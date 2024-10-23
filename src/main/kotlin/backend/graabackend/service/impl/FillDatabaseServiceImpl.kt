@@ -23,7 +23,6 @@ class FillDatabaseServiceImpl(
     private val nftDao: GlobalSearchNftsDao,
     private val nftControllerHelper: NftControllerHelper,
     private val collectionDao: GlobalSearchCollectionsDao,
-    private val collectionControllerHelper: CollectionControllerHelper,
 ): FillDatabaseService {
     @Autowired
     lateinit var retrofitFillDatabaseBuilder: RetrofitConfig
@@ -94,22 +93,19 @@ class FillDatabaseServiceImpl(
 
                             nftDao.save(
                                 GlobalSearchNfts(
-                                    nftAddress = nftControllerHelper.changeNftAddressFormat(
-                                        collectionControllerHelper.changeCollectionAddressFormat(
-                                            nft.address
-                                        )
-                                    ),
+                                    nftAddress = nftControllerHelper.changeNftAddressFormat(nft.address),
                                     nftName = nftName,
                                     nftDescription = nftDescription,
                                     nftOwner = nftOwner,
                                     nftImage = nftImage,
-                                    nftCollection = address,
+                                    nftCollection = nftControllerHelper.changeNftAddressFormat(address),
 
                                 )
                             )
                         }
                     }
                 }
+
                 nftCounter = 0
             }
 
