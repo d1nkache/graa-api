@@ -1,3 +1,5 @@
+# NFT Marketplace
+
 ## Stack
 - Spring Boot
 - Spring Security
